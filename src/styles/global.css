@@ -1,0 +1,466 @@
+@import 'tailwindcss';
+
+/* Tema gelap = bawaan. html[data-theme="light"] diset oleh skrip di <head>. */
+@custom-variant light (&:where([data-theme='light'], [data-theme='light'] *));
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-cyan: #2ad4ff;
+  --color-cyan-ink: var(--cyan-ink);
+  --color-orange: #ff9a1f;
+  --color-sky: #1aa3ff;
+  --color-sun: #ffe81a;
+
+  --radius-panel: 23px;
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #04060c;
+  --bg-soft: #080c16;
+  --surface: rgb(255 255 255 / 0.035);
+  --surface-2: rgb(255 255 255 / 0.065);
+  --line: rgb(255 255 255 / 0.08);
+  --text: #e9eff7;
+  --muted: #8d9aae;
+  --cyan-ink: #2ad4ff;
+  --glow: 0.55;
+  --grid-line: rgb(255 255 255 / 0.035);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f5f7fb;
+  --bg-soft: #edf1f7;
+  --surface: rgb(255 255 255 / 0.75);
+  --surface-2: #ffffff;
+  --line: rgb(15 23 42 / 0.09);
+  --text: #0a1222;
+  --muted: #566479;
+  --cyan-ink: #0284c7;
+  --glow: 0.28;
+  --grid-line: rgb(15 23 42 / 0.05);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgb(42 212 255 / 0.3);
+}
+
+/* ---------- Utilitas umum (layer components agar utilitas Tailwind tetap menang) ---------- */
+@layer components {
+
+.text-gradient {
+  background: linear-gradient(100deg, #00e5ff 0%, #1aa3ff 38%, #ffb21a 70%, #ff9a1f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan-ink);
+}
+.eyebrow::before {
+  content: '';
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2ad4ff, #ff9a1f);
+}
+
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6em;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Tombol */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  height: 3rem;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition:
+    transform 0.25s var(--ease-spring),
+    box-shadow 0.3s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+  isolation: isolate;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  color: #03121a;
+  background: linear-gradient(100deg, #2ad4ff, #6fe3ff 45%, #ffc24d 85%, #ff9a1f);
+  background-size: 200% 100%;
+  background-position: 0% 0;
+  box-shadow:
+    0 10px 30px -10px rgb(42 212 255 / calc(var(--glow) + 0.1)),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+  transition:
+    transform 0.25s var(--ease-spring),
+    box-shadow 0.3s ease,
+    background-position 0.6s ease;
+}
+.btn-primary:hover {
+  background-position: 100% 0;
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 40px -12px rgb(255 154 31 / calc(var(--glow) + 0.1)),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+}
+.btn-ghost {
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover {
+  background: var(--surface-2);
+  border-color: rgb(42 212 255 / 0.35);
+  transform: translateY(-2px);
+}
+.btn-sm {
+  height: 2.4rem;
+  padding: 0 1rem;
+  font-size: 0.85rem;
+}
+
+}
+
+:focus-visible {
+  outline: 2px solid #2ad4ff;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Latar: grid + cahaya */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+}
+
+.orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(80px);
+  opacity: var(--glow);
+  pointer-events: none;
+}
+
+/* Reveal saat gulir */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(6px);
+  transition:
+    opacity 0.8s var(--ease-out-expo),
+    transform 0.8s var(--ease-out-expo),
+    filter 0.8s var(--ease-out-expo);
+  transition-delay: calc(var(--d, 0) * 80ms);
+}
+[data-reveal].in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.no-js [data-reveal] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Kartu dengan sorot kursor */
+.spot {
+  position: relative;
+  isolation: isolate;
+}
+.spot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    420px circle at var(--mx, -999px) var(--my, -999px),
+    rgb(42 212 255 / 0.12),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.spot::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    300px circle at var(--mx, -999px) var(--my, -999px),
+    rgb(42 212 255 / 0.7),
+    rgb(255 154 31 / 0.35) 40%,
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.spot:hover::before,
+.spot:hover::after {
+  opacity: 1;
+}
+
+/* ---------- Mata robot (meniru aplikasi) ---------- */
+.robot-eyes {
+  --eye: #2ad4ff;
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  transform: translate(var(--look-x, 0px), var(--look-y, 0px));
+  transition: transform 0.12s ease-out;
+}
+.robot-eyes .eye {
+  width: 7px;
+  height: 11px;
+  border-radius: 4px;
+  background: var(--eye);
+  box-shadow: 0 0 7px color-mix(in srgb, var(--eye) 70%, transparent);
+  transform-origin: center;
+  animation: eye-blink 4.6s infinite;
+}
+.robot-eyes .eye + .eye {
+  animation-delay: 0.04s;
+}
+.robot-eyes.lg .eye {
+  width: 12px;
+  height: 19px;
+  border-radius: 6px;
+}
+.robot-eyes.lg {
+  gap: 8px;
+}
+@keyframes eye-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  93% { transform: scaleY(0.12); }
+  96% { transform: scaleY(1); }
+}
+.robot-eyes.talking .eye {
+  animation: eye-talk 0.22s steps(2, jump-none) infinite alternate;
+}
+@keyframes eye-talk {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0.45); }
+}
+.robot-eyes.listening .eye {
+  box-shadow: 0 0 10px var(--eye);
+  animation: eye-listen 0.9s ease-in-out infinite;
+}
+@keyframes eye-listen {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.25); }
+}
+.robot-eyes.mood-sleepy .eye {
+  animation: eye-sleepy 4s ease-in-out infinite;
+}
+@keyframes eye-sleepy {
+  0%, 100% { transform: scaleY(0.18); }
+  50% { transform: scaleY(0.38); }
+}
+.robot-eyes.mood-angry {
+  animation: eye-shake 2.4s ease-in-out infinite;
+}
+.robot-eyes.mood-angry .eye {
+  --eye: #ff6b6b !important;
+  animation: none;
+}
+.robot-eyes.mood-angry .eye:first-child {
+  clip-path: polygon(0 0, 100% 42%, 100% 100%, 0 100%);
+}
+.robot-eyes.mood-angry .eye:last-child {
+  clip-path: polygon(0 42%, 100% 0, 100% 100%, 0 100%);
+}
+@keyframes eye-shake {
+  0%, 80%, 100% { translate: 0; }
+  84% { translate: -1.5px; }
+  88% { translate: 1.5px; }
+  92% { translate: -1px; }
+}
+.robot-eyes.mood-hot .eye {
+  --eye: #ffb347 !important;
+  animation: eye-hot 1.6s ease-in-out infinite;
+}
+.robot-eyes.mood-hot::after {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  font-size: 8px;
+  content: '💦';
+  animation: sweat 1.6s ease-in infinite;
+}
+@keyframes eye-hot {
+  0%, 100% { transform: scaleY(0.85); }
+  50% { transform: scaleY(0.6); }
+}
+@keyframes sweat {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
+}
+.robot-eyes.mood-exercise {
+  animation: eye-exercise 6s ease-in-out infinite;
+}
+.robot-eyes.mood-exercise .eye {
+  animation: none;
+}
+@keyframes eye-exercise {
+  0%, 100% { translate: 0 0; }
+  10%, 18% { translate: -3px 0; }
+  26%, 34% { translate: 3px 0; }
+  42%, 50% { translate: 0 -2px; }
+  58%, 66% { translate: 0 2px; }
+  72% { translate: -2.5px -1.5px; }
+  78% { translate: 2.5px -1.5px; }
+  84% { translate: 2.5px 1.5px; }
+  90% { translate: -2.5px 1.5px; }
+}
+
+/* ---------- Gelombang suara ---------- */
+.wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+}
+.wave i {
+  width: 3px;
+  height: 100%;
+  border-radius: 3px;
+  background: currentColor;
+  transform: scaleY(0.25);
+  animation: wave 1s ease-in-out infinite;
+}
+.wave i:nth-child(2) { animation-delay: -0.8s; }
+.wave i:nth-child(3) { animation-delay: -0.6s; }
+.wave i:nth-child(4) { animation-delay: -0.4s; }
+.wave i:nth-child(5) { animation-delay: -0.2s; }
+.wave i:nth-child(6) { animation-delay: -0.7s; }
+.wave i:nth-child(7) { animation-delay: -0.3s; }
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
+.wave.idle i {
+  animation-play-state: paused;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgb(42 212 255 / 0.5); }
+  100% { box-shadow: 0 0 0 14px rgb(42 212 255 / 0); }
+}
+@keyframes caret {
+  50% { opacity: 0; }
+}
+
+/* View transition: root tanpa crossfade (tema memakai animasi lingkaran) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* View transition saat filter fitur */
+::view-transition-group(*) {
+  animation-duration: 0.45s;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}

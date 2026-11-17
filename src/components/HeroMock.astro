@@ -1,0 +1,738 @@
+---
+import Icon from './Icon.astro';
+import type { Content, Lang } from '../i18n/content';
+import { SAMPLE_TIMES, fmtTime } from '../scripts/prayer';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+}
+const { t, lang } = Astro.props;
+const m = t.mock;
+const tabIcons = ['sun', 'music', 'moon', 'clipboard', 'zap', 'code'];
+const lyrics = t.highlights.music.lyrics;
+---
+
+<div class="hero-mock relative" data-stage-wrap data-lg-w="1000" data-lg-h="580" data-sm-w="420" data-sm-h="620">
+  <div class="stage" data-stage>
+    <!-- Monitor / desktop Windows tiruan -->
+    <div class="desktop" id="hero-desktop">
+      <div class="wall" aria-hidden="true">
+        <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+      </div>
+
+      <div class="desk-icons" aria-hidden="true">
+        <span><i></i>Dokumen</span>
+        <span><i></i>Projects</span>
+        <span><i></i>Recycle Bin</span>
+      </div>
+
+      <div class="hint" id="hero-hint" aria-hidden="true">
+        <Icon name="mouse-pointer" size={14} />
+        {t.hero.hint}
+      </div>
+
+      <!-- Kapsul Dzerly -->
+      <div class="island" id="island" data-open="false" style="--cw:360px">
+        <button class="compact" id="island-compact" aria-label="Dzerly" aria-expanded="false" aria-controls="island-panel">
+          <span class="robot-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+          <span class="font-semibold tabular-nums text-white" data-clock>09.41</span>
+          <span class="sep"></span>
+          <span class="flex items-center gap-1.5 text-[#c9d6e4]">
+            <Icon name="cloud-sun" size={15} class="text-[#ffd166]" />28°
+          </span>
+          <span class="sep"></span>
+          <span class="lyric-wrap">
+            <Icon name="music" size={13} class="shrink-0 text-cyan" />
+            <span class="lyric" id="island-lyric" data-lyrics={JSON.stringify(lyrics)}>{m.lyric}</span>
+          </span>
+        </button>
+
+        <div class="panel" id="island-panel" role="region" aria-label="Dzerly panel">
+          <div class="flex items-center gap-2.5 px-4 pt-3.5 pb-2.5">
+            <span class="robot-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+            <span class="text-[13px] font-bold text-white">Dzerly</span>
+            <span class="chip ml-1" data-date>Sel, 17 Nov</span>
+            <span class="ml-auto chip tabular-nums"><span class="dot"></span><span data-clock>09.41</span></span>
+            <button class="close" id="island-close" aria-label="Tutup panel">
+              <Icon name="chevron" size={16} class="rotate-180" />
+            </button>
+          </div>
+
+          <div class="tabs" role="tablist">
+            <span class="tab-ind" id="tab-ind" aria-hidden="true"></span>
+            {
+              m.tabs.map((name, i) => (
+                <button role="tab" class="tab" data-tab={i} aria-selected={i === 0 ? 'true' : 'false'}>
+                  <Icon name={tabIcons[i]} size={13} />
+                  {name}
+                </button>
+              ))
+            }
+          </div>
+
+          <div class="views @container">
+            <!-- Hari ini -->
+            <section class="view" data-view="0" data-active>
+              <p class="eyebrow-s">{m.today.eyebrow}</p>
+              <div class="grid gap-2.5 @md:grid-cols-2">
+                <div class="card">
+                  <p class="card-t"><Icon name="calendar" size={13} />{m.today.agenda}</p>
+                  <ul class="space-y-1.5">
+                    {
+                      m.today.agendaItems.map(([time, what]) => (
+                        <li class="flex items-center gap-2.5">
+                          <span class="w-10 font-mono text-[11px] text-cyan">{time}</span>
+                          <span class="text-[12.5px]">{what}</span>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+                <div class="card">
+                  <p class="card-t"><Icon name="list-checks" size={13} />{m.today.todo}</p>
+                  <ul class="space-y-1">
+                    {
+                      m.today.todoItems.map((td, i) => (
+                        <li>
+                          <button class="todo" data-done={i === 0 ? 'true' : 'false'}>
+                            <span class="box"><Icon name="check" size={10} stroke={3} /></span>
+                            <span class="lbl">{td}</span>
+                          </button>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+                <div class="card flex items-center gap-3">
+                  <span class="ico"><Icon name="party" size={16} /></span>
+                  <div>
+                    <p class="text-[11px] text-[#8da0b5]">{m.today.holiday}</p>
+                    <p class="text-[13px] font-semibold">{m.today.holidayName} · <span class="text-orange">{m.today.holidayIn}</span></p>
+                  </div>
+                </div>
+                <div class="card flex items-center gap-3">
+                  <button class="focus-ring" id="focus-btn" aria-label={m.today.focus}>
+                    <svg viewBox="0 0 36 36" class="absolute inset-0 -rotate-90"><circle cx="18" cy="18" r="16" fill="none" stroke="rgba(42,212,255,.15)" stroke-width="3" /><circle id="focus-arc" cx="18" cy="18" r="16" fill="none" stroke="#2ad4ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="0" /></svg>
+                    <span id="focus-ico"><Icon name="play" size={12} /></span>
+                  </button>
+                  <div>
+                    <p class="text-[11px] text-[#8da0b5]">{m.today.focus}</p>
+                    <p class="font-mono text-[15px] font-semibold tabular-nums" id="focus-time">25:00</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Musik -->
+            <section class="view" data-view="1">
+              <div class="grid gap-2.5 @md:grid-cols-[1.3fr_1fr]">
+                <div class="card">
+                  <div class="flex items-center gap-3">
+                    <div class="art"><Icon name="music" size={18} /></div>
+                    <div class="min-w-0">
+                      <p class="truncate text-[13.5px] font-bold">{m.music.song}</p>
+                      <p class="text-[11.5px] text-[#8da0b5]">{m.music.artist} · {m.music.source}</p>
+                    </div>
+                  </div>
+                  <div class="mt-3 h-1 overflow-hidden rounded-full bg-white/10"><i class="block h-full w-2/5 rounded-full bg-gradient-to-r from-cyan to-orange" id="mus-prog"></i></div>
+                  <div class="mt-3 space-y-1 text-[12.5px]" id="mus-lyrics">
+                    {lyrics.slice(0, 4).map((l, i) => <p class:list={['ly', i === 1 && 'on']}>{l}</p>)}
+                  </div>
+                </div>
+                <div class="card">
+                  <p class="card-t"><Icon name="list-music" size={13} />{m.music.queue}</p>
+                  <ul class="space-y-1.5">
+                    {
+                      m.music.queueItems.map((q, i) => (
+                        <li class="flex items-center gap-2 rounded-lg bg-white/[.03] px-2 py-1.5 text-[12px]">
+                          <span class="grid size-5 place-items-center rounded-full bg-cyan/15 text-cyan"><Icon name="play" size={8} /></span>
+                          {q}
+                          <span class="ml-auto text-[10px] text-[#8da0b5]">{i === 0 ? 'YouTube' : 'Spotify'}</span>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- Sholat -->
+            <section class="view" data-view="2">
+              <div class="grid gap-2.5 @md:grid-cols-[1fr_1.2fr]">
+                <div class="card flex flex-col justify-center text-center">
+                  <span class="mx-auto mb-1 grid size-9 place-items-center rounded-xl bg-cyan/10 text-cyan"><Icon name="moon" size={17} /></span>
+                  <p class="text-[11px] text-[#8da0b5]">{m.prayer.next}</p>
+                  <p class="text-[17px] font-bold" data-next-name>Maghrib</p>
+                  <p class="font-mono text-[22px] font-semibold text-cyan tabular-nums" data-next-cd>00:00:00</p>
+                  <p class="text-[10.5px] text-[#8da0b5]">{m.prayer.city} · {m.prayer.method}</p>
+                </div>
+                <ul class="card space-y-1" data-prayer-list>
+                  {
+                    m.prayer.names.map((n, i) => (
+                      <li class="prow" data-i={i}>
+                        <span>{n}</span>
+                        <span class="font-mono tabular-nums">{fmtTime(SAMPLE_TIMES[i], lang)}</span>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </section>
+
+            <!-- Hub -->
+            <section class="view" data-view="3">
+              <div class="grid gap-2.5 @md:grid-cols-[1.3fr_1fr]">
+                <div class="card">
+                  <p class="card-t"><Icon name="clipboard" size={13} />{m.hub.clipboard}</p>
+                  <ul class="space-y-1">
+                    {
+                      m.hub.clips.map((c) => (
+                        <li>
+                          <button class="clip">
+                            <span class="truncate">{c}</span>
+                            <Icon name="check" size={12} class="ok" />
+                          </button>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+                <div class="grid gap-2.5">
+                  <div class="card grid place-items-center border-dashed! py-3 text-center text-[11.5px] text-[#8da0b5]">
+                    <Icon name="archive" size={18} class="mb-1 text-cyan" />
+                    <span class="font-semibold text-[#d6e3ef]">{m.hub.shelf}</span>
+                    {m.hub.shelfHint}
+                  </div>
+                  <div class="card flex items-center gap-3">
+                    <div class="qr" aria-hidden="true">
+                      {Array.from({ length: 49 }, (_, i) => <i class={(i * 7 + (i % 5) * 3) % 3 === 0 || [0, 1, 7, 8, 5, 6, 12, 13, 35, 36, 42, 43].includes(i) ? 'on' : ''} />)}
+                    </div>
+                    <span class="text-[12px] font-semibold">{m.hub.phone}</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Otomasi -->
+            <section class="view" data-view="4">
+              <div class="card">
+                <p class="card-t"><Icon name="zap" size={13} />{m.auto.rules}</p>
+                <ul class="space-y-1.5">
+                  {
+                    m.auto.ruleItems.map(([when, what], i) => (
+                      <li class="flex items-center gap-3 rounded-lg bg-white/[.03] px-2.5 py-2">
+                        <div class="min-w-0">
+                          <p class="text-[11px] text-cyan">{when}</p>
+                          <p class="truncate text-[12.5px]">{what}</p>
+                        </div>
+                        <button class="switch ml-auto" role="switch" aria-checked={i !== 2 ? 'true' : 'false'} aria-label={what}><i /></button>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+              <div class="mt-2.5 flex flex-wrap items-center gap-2">
+                <span class="text-[11px] text-[#8da0b5]">{m.auto.macro}</span>
+                {m.auto.macros.map((mc) => <button class="macro"><Icon name="command" size={11} />{mc}</button>)}
+              </div>
+            </section>
+
+            <!-- Dev -->
+            <section class="view" data-view="5">
+              <div class="grid gap-2.5 @md:grid-cols-2">
+                <div class="card">
+                  <p class="card-t"><Icon name="git-branch" size={13} />{m.dev.repos}</p>
+                  <ul class="space-y-1.5 font-mono text-[11.5px]">
+                    <li class="flex items-center gap-2"><span>dzerly-landing</span><span class="ml-auto text-[#8da0b5]">main</span><span class="badge ok">✓ {m.dev.build}</span></li>
+                    <li class="flex items-center gap-2"><span>api-gateway</span><span class="ml-auto text-[#8da0b5]">dev</span><span class="badge run">● {m.dev.build}</span></li>
+                    <li class="flex items-center gap-2"><span>mobile-app</span><span class="ml-auto text-[#8da0b5]">feat/ui</span><span class="badge ok">✓ {m.dev.build}</span></li>
+                  </ul>
+                </div>
+                <div class="card">
+                  <p class="card-t"><Icon name="activity" size={13} />{m.dev.monitor}</p>
+                  <ul class="space-y-2 text-[11.5px]">
+                    {
+                      [
+                        ['api.example.com', true],
+                        ['db:5432', true],
+                        ['staging.example.com', false],
+                      ].map(([host, up]) => (
+                        <li class="flex items-center gap-2">
+                          <span class:list={['size-1.5 rounded-full', up ? 'bg-emerald-400' : 'animate-pulse bg-rose-400']} />
+                          <span class="font-mono">{host}</span>
+                          <span class="spark ml-auto" data-spark={up ? 'up' : 'down'}>
+                            {Array.from({ length: 10 }, () => <i />)}
+                          </span>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taskbar -->
+      <div class="taskbar" aria-hidden="true">
+        <span class="tb-start"><i></i><i></i><i></i><i></i></span>
+        <span class="tb-app"></span><span class="tb-app"></span><span class="tb-app active"></span><span class="tb-app"></span>
+        <span class="tb-clock"><span data-clock>09.41</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stage {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform-origin: top center;
+  }
+  .desktop {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    background: #070b15;
+    box-shadow:
+      0 50px 120px -30px rgb(0 0 0 / 0.7),
+      0 0 0 8px rgb(255 255 255 / 0.03),
+      0 0 120px -40px rgb(42 212 255 / 0.35);
+  }
+  :global([data-theme='light']) .desktop {
+    box-shadow:
+      0 50px 100px -30px rgb(15 23 42 / 0.35),
+      0 0 0 8px rgb(15 23 42 / 0.04);
+  }
+  .wall {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 90% at 50% 120%, #0d1b33 0%, transparent 60%),
+      linear-gradient(160deg, #0a1020, #05070d 60%);
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.55;
+    animation: float 12s ease-in-out infinite;
+  }
+  .b1 { width: 340px; height: 340px; left: 6%; top: 34%; background: #1aa3ff; }
+  .b2 { width: 300px; height: 300px; right: 4%; top: 46%; background: #ff9a1f; opacity: 0.4; animation-delay: -4s; }
+  .b3 { width: 220px; height: 220px; left: 46%; top: 70%; background: #00e5ff; opacity: 0.3; animation-delay: -8s; }
+
+  .desk-icons {
+    position: absolute;
+    left: 18px;
+    top: 70px;
+    display: grid;
+    gap: 18px;
+    font-size: 10px;
+    color: rgb(255 255 255 / 0.65);
+  }
+  .desk-icons span { display: grid; justify-items: center; gap: 4px; width: 60px; text-align: center; }
+  .desk-icons i { width: 34px; height: 28px; border-radius: 6px; background: linear-gradient(160deg, rgb(255 255 255 / 0.22), rgb(255 255 255 / 0.06)); }
+  [data-size='sm'] .desk-icons { display: none; }
+
+  .taskbar {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgb(12 16 26 / 0.75);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgb(255 255 255 / 0.06);
+  }
+  .tb-start { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 18px; height: 18px; margin-right: 4px; }
+  .tb-start i { border-radius: 1.5px; background: #6cc6ff; }
+  .tb-app { width: 26px; height: 26px; border-radius: 7px; background: rgb(255 255 255 / 0.12); position: relative; }
+  .tb-app.active::after { content: ''; position: absolute; left: 50%; bottom: -6px; width: 10px; height: 3px; translate: -50% 0; border-radius: 3px; background: #2ad4ff; }
+  .tb-clock { position: absolute; right: 16px; font-size: 11px; color: rgb(255 255 255 / 0.75); font-variant-numeric: tabular-nums; }
+
+  .hint {
+    position: absolute;
+    top: 66px;
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #cfe9ff;
+    background: rgb(42 212 255 / 0.12);
+    border: 1px solid rgb(42 212 255 / 0.25);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    animation: float 2.4s ease-in-out infinite;
+  }
+  .hint.show { opacity: 1; }
+
+  /* ---------- Kapsul ---------- */
+  .island {
+    --pw: 640px;
+    --ph: 410px;
+    position: absolute;
+    z-index: 5;
+    top: 12px;
+    left: 50%;
+    translate: -50% 0;
+    width: var(--cw);
+    height: 42px;
+    border-radius: 21px;
+    color: #d6e3ef;
+    background: #060a12;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    overflow: hidden;
+    box-shadow: 0 20px 50px -18px rgb(0 0 0 / 0.8);
+    transition:
+      width 0.75s cubic-bezier(0.32, 1.22, 0.5, 1),
+      height 0.75s cubic-bezier(0.32, 1.18, 0.5, 1),
+      border-radius 0.5s ease;
+  }
+  [data-size='sm'] .island { --pw: 396px; --ph: 520px; --cw: 330px !important; }
+  .island[data-open='true'] {
+    width: var(--pw);
+    height: var(--ph);
+    border-radius: 23px;
+  }
+  .island[data-intro='true'] { width: 120px; }
+
+  .compact {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.4s ease;
+  }
+  .compact:hover { background: rgb(255 255 255 / 0.02); }
+  .island[data-open='true'] .compact { opacity: 0; transform: scale(0.9); pointer-events: none; }
+  .island[data-intro='true'] .compact > :not(.robot-eyes) { opacity: 0; }
+  .compact > * { transition: opacity 0.3s ease 0.25s; }
+  .sep { width: 1px; height: 14px; background: rgb(255 255 255 / 0.12); }
+  .lyric-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1; }
+  .lyric { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #eef5fb; }
+  .lyric.swap { animation: lyric-in 0.45s ease-out both; }
+  @keyframes lyric-in {
+    from { opacity: 0; transform: translateY(6px); filter: blur(3px); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
+
+  .panel {
+    position: absolute;
+    inset: 0;
+    width: var(--pw);
+    height: var(--ph);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(0.97);
+    transform-origin: top center;
+    pointer-events: none;
+    transition: opacity 0.2s ease, filter 0.3s ease, transform 0.4s ease;
+  }
+  .island[data-open='true'] .panel {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 0.18s;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border: 1px solid rgb(255 255 255 / 0.07);
+    border-radius: 9px;
+    font-size: 11px;
+    color: #c4d3e2;
+    background: rgb(255 255 255 / 0.04);
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #2ad4ff; box-shadow: 0 0 8px #2ad4ff; }
+  .close {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    color: #9fb0c3;
+    transition: background 0.2s, color 0.2s;
+  }
+  .close:hover { background: rgb(255 255 255 / 0.07); color: #fff; }
+
+  .tabs {
+    position: relative;
+    display: flex;
+    gap: 2px;
+    margin: 0 12px;
+    padding: 3px;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.035);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    flex: 1 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 9px;
+    border-radius: 9px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #8da0b5;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  .tab:hover { color: #d6e3ef; }
+  .tab[aria-selected='true'] { color: #03121a; }
+  .tab-ind {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    width: 0;
+    border-radius: 9px;
+    background: linear-gradient(100deg, #2ad4ff, #7fe6ff);
+    box-shadow: 0 4px 14px -4px rgb(42 212 255 / 0.6);
+    transition: transform 0.45s cubic-bezier(0.34, 1.3, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+
+  .views { position: relative; flex: 1; min-height: 0; padding: 12px; }
+  .view {
+    position: absolute;
+    inset: 12px;
+    overflow: auto;
+    scrollbar-width: none;
+    opacity: 0;
+    transform: translateX(14px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .view[data-active] { opacity: 1; transform: none; pointer-events: auto; }
+  .view[data-dir='left'] { transform: translateX(-14px); }
+
+  .eyebrow-s { margin-bottom: 8px; font-size: 9.5px; font-weight: 800; letter-spacing: 1.25px; color: #2ad4ff; }
+  .card {
+    padding: 11px 12px;
+    border: 1px solid rgb(255 255 255 / 0.07);
+    border-radius: 15px;
+    background: rgb(255 255 255 / 0.04);
+  }
+  .card-t { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #8da0b5; }
+  .ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; color: #ff9a1f; background: rgb(255 154 31 / 0.1); }
+
+  .todo { display: flex; align-items: center; gap: 8px; width: 100%; padding: 4px 2px; font-size: 12.5px; text-align: left; }
+  .todo .box { display: grid; place-items: center; width: 15px; height: 15px; flex: none; border: 1.5px solid rgb(255 255 255 / 0.25); border-radius: 5px; color: transparent; transition: all 0.2s; }
+  .todo[data-done='true'] .box { background: #2ad4ff; border-color: #2ad4ff; color: #03121a; }
+  .todo[data-done='true'] .lbl { color: #6b7b8f; text-decoration: line-through; }
+
+  .focus-ring { position: relative; display: grid; place-items: center; width: 40px; height: 40px; color: #2ad4ff; }
+  #focus-arc { transition: stroke-dashoffset 1s linear; }
+
+  .art { display: grid; place-items: center; width: 42px; height: 42px; flex: none; border-radius: 11px; color: #03121a; background: linear-gradient(135deg, #2ad4ff, #ff9a1f); }
+  .ly { color: #6b7b8f; transition: color 0.3s, transform 0.3s; transform-origin: left; }
+  .ly.on { color: #fff; font-weight: 600; transform: scale(1.03); }
+
+  .prow { display: flex; justify-content: space-between; padding: 7px 10px; border-radius: 9px; font-size: 12.5px; transition: background 0.3s; }
+  .prow.next { background: rgb(42 212 255 / 0.12); color: #fff; font-weight: 700; box-shadow: inset 2px 0 0 #2ad4ff; }
+  .prow.past { color: #6b7b8f; }
+
+  .clip { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 9px; border-radius: 9px; font-size: 12px; text-align: left; background: rgb(255 255 255 / 0.03); transition: background 0.2s; }
+  .clip:hover { background: rgb(42 212 255 / 0.1); }
+  .clip .ok { margin-left: auto; flex: none; color: #2ad4ff; opacity: 0; transition: opacity 0.2s; }
+  .clip.copied .ok { opacity: 1; }
+
+  .qr { display: grid; grid-template-columns: repeat(7, 5px); gap: 1px; padding: 4px; border-radius: 6px; background: #fff; }
+  .qr i { width: 5px; height: 5px; }
+  .qr i.on { background: #05070d; }
+
+  .switch { position: relative; width: 32px; height: 18px; flex: none; border-radius: 99px; background: rgb(255 255 255 / 0.15); transition: background 0.25s; }
+  .switch i { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1); }
+  .switch[aria-checked='true'] { background: #2ad4ff; }
+  .switch[aria-checked='true'] i { transform: translateX(14px); }
+
+  .macro { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 600; border: 1px solid rgb(255 255 255 / 0.08); background: rgb(255 255 255 / 0.04); transition: all 0.2s; }
+  .macro:hover { border-color: #ff9a1f; color: #ffc27a; }
+  .macro:active { transform: scale(0.95); }
+
+  .badge { padding: 1px 6px; border-radius: 6px; font-size: 10px; }
+  .badge.ok { color: #6ee7b7; background: rgb(110 231 183 / 0.1); }
+  .badge.run { color: #ffc27a; background: rgb(255 154 31 / 0.12); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.55; } }
+  .spark { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+  .spark i { width: 3px; height: 40%; border-radius: 1px; background: #2ad4ff; opacity: 0.7; transition: height 0.6s ease; }
+  .spark[data-spark='down'] i { background: #fb7185; }
+</style>
+
+<script>
+  import { nextPrayer, fmtCountdown } from '../scripts/prayer';
+
+  const island = document.getElementById('island')!;
+  const compact = document.getElementById('island-compact')!;
+  const closeBtn = document.getElementById('island-close')!;
+  const hint = document.getElementById('hero-hint')!;
+  const desktop = document.getElementById('hero-desktop')!;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let touched = false;
+
+  const setOpen = (open: boolean) => {
+    island.dataset.open = String(open);
+    compact.setAttribute('aria-expanded', String(open));
+    hint.classList.toggle('show', !open);
+    if (open) requestAnimationFrame(() => moveInd(currentTab, false));
+  };
+  compact.addEventListener('click', () => {
+    touched = true;
+    setOpen(true);
+  });
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    touched = true;
+    setOpen(false);
+  });
+  desktop.addEventListener('click', (e) => {
+    if (!island.contains(e.target as Node) && island.dataset.open === 'true') {
+      touched = true;
+      setOpen(false);
+    }
+  });
+
+  // Intro: kapsul kecil → melebar → mengembang jadi panel
+  island.dataset.intro = 'true';
+  setTimeout(() => (island.dataset.intro = 'false'), reduce ? 0 : 500);
+  setTimeout(() => !touched && setOpen(true), reduce ? 0 : 1700);
+
+  // Tab
+  const tabs = [...island.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+  const views = [...island.querySelectorAll<HTMLElement>('[data-view]')];
+  const ind = document.getElementById('tab-ind')!;
+  let currentTab = 0;
+  const moveInd = (i: number, animate = true) => {
+    const tb = tabs[i];
+    if (!animate) ind.style.transition = 'none';
+    ind.style.width = `${tb.offsetWidth}px`;
+    ind.style.transform = `translateX(${tb.offsetLeft}px)`;
+    if (!animate) requestAnimationFrame(() => (ind.style.transition = ''));
+  };
+  const selectTab = (i: number) => {
+    const dir = i > currentTab ? 'right' : 'left';
+    tabs.forEach((tb, k) => tb.setAttribute('aria-selected', String(k === i)));
+    views.forEach((v, k) => {
+      v.toggleAttribute('data-active', k === i);
+      v.dataset.dir = k < i ? 'left' : 'right';
+    });
+    void dir;
+    currentTab = i;
+    moveInd(i);
+    tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+  };
+  tabs.forEach((tb, i) => tb.addEventListener('click', () => selectTab(i)));
+  new ResizeObserver(() => moveInd(currentTab, false)).observe(island);
+
+  // Lirik bergulir di kapsul & tab musik
+  const lyricEl = document.getElementById('island-lyric')!;
+  const lines: string[] = JSON.parse(lyricEl.dataset.lyrics || '[]');
+  const lyEls = [...document.querySelectorAll<HTMLElement>('#mus-lyrics .ly')];
+  const prog = document.getElementById('mus-prog')!;
+  let li = 1;
+  setInterval(() => {
+    li = (li + 1) % lines.length;
+    lyricEl.textContent = lines[li];
+    lyricEl.classList.remove('swap');
+    void lyricEl.offsetWidth;
+    lyricEl.classList.add('swap');
+    const start = Math.max(0, Math.min(li - 1, lines.length - lyEls.length));
+    lyEls.forEach((el, k) => {
+      el.textContent = lines[start + k];
+      el.classList.toggle('on', start + k === li);
+    });
+    prog.style.width = `${((li + 1) / lines.length) * 100}%`;
+  }, 3200);
+
+  // To-do
+  island.querySelectorAll<HTMLButtonElement>('.todo').forEach((b) =>
+    b.addEventListener('click', () => (b.dataset.done = String(b.dataset.done !== 'true'))),
+  );
+
+  // Sesi fokus (demo: berjalan cepat)
+  const focusBtn = document.getElementById('focus-btn')!;
+  const focusTime = document.getElementById('focus-time')!;
+  const focusArc = document.getElementById('focus-arc')!;
+  const focusIco = document.getElementById('focus-ico')!;
+  const playSvg = focusIco.innerHTML;
+  const pauseSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4h3v16H7zM14 4h3v16h-3z"/></svg>';
+  let left = 25 * 60;
+  let timer = 0;
+  focusBtn.addEventListener('click', () => {
+    if (timer) {
+      clearInterval(timer);
+      timer = 0;
+      focusIco.innerHTML = playSvg;
+      return;
+    }
+    focusIco.innerHTML = pauseSvg;
+    timer = window.setInterval(() => {
+      left = left <= 0 ? 25 * 60 : left - 1;
+      focusTime.textContent = fmtCountdown(left);
+      focusArc.setAttribute('stroke-dashoffset', String(100.5 * (1 - left / 1500)));
+    }, 1000);
+  });
+
+  // Jadwal sholat & hitung mundur
+  const rows = [...island.querySelectorAll<HTMLElement>('.prow')];
+  const nameEl = island.querySelector<HTMLElement>('[data-next-name]')!;
+  const cdEl = island.querySelector<HTMLElement>('[data-next-cd]')!;
+  const tickPrayer = () => {
+    const { index, seconds } = nextPrayer();
+    rows.forEach((r, k) => {
+      r.classList.toggle('next', k === index);
+      r.classList.toggle('past', k < index);
+    });
+    nameEl.textContent = rows[index].firstElementChild!.textContent;
+    cdEl.textContent = fmtCountdown(seconds);
+  };
+  tickPrayer();
+  setInterval(tickPrayer, 1000);
+
+  // Clipboard
+  island.querySelectorAll<HTMLButtonElement>('.clip').forEach((c) =>
+    c.addEventListener('click', () => {
+      c.classList.add('copied');
+      setTimeout(() => c.classList.remove('copied'), 1200);
+    }),
+  );
+
+  // Switch otomasi
+  island.querySelectorAll<HTMLButtonElement>('.switch').forEach((s) =>
+    s.addEventListener('click', () => s.setAttribute('aria-checked', String(s.getAttribute('aria-checked') !== 'true'))),
+  );
+
+  // Sparkline monitor server
+  const sparks = [...island.querySelectorAll<HTMLElement>('.spark i')];
+  const shuffleSpark = () => sparks.forEach((i) => (i.style.height = `${25 + Math.random() * 75}%`));
+  shuffleSpark();
+  setInterval(shuffleSpark, 1800);
+</script>

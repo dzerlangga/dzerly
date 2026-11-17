@@ -1,0 +1,113 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { SITE } from '../config';
+import type { Content } from '../i18n/content';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+const d = t.download;
+---
+
+<section id="unduh" class="relative py-24 sm:py-32">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center" data-reveal>
+      <p class="eyebrow">{d.eyebrow}</p>
+      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{d.title}</h2>
+    </div>
+
+    <div class="mt-14 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
+      <div class="glass overflow-hidden rounded-[23px] lg:self-start" data-reveal>
+        <dl class="divide-y divide-line">
+          {
+            d.reqs.map(([k, v]) => (
+              <div class="grid gap-1 px-6 py-5 sm:grid-cols-[11rem_1fr] sm:gap-4">
+                <dt class="text-sm font-semibold text-muted">{k}</dt>
+                <dd class="font-semibold">{v}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="grid gap-4" data-reveal style="--d:1">
+        <a href={SITE.downloads.exe} download class="dl-card group dl-main">
+          <span class="dl-ico"><Logo size={36} /></span>
+          <span class="min-w-0 flex-1">
+            <span class="flex flex-wrap items-center gap-2">
+              <span class="text-lg font-bold">{d.exe}</span>
+              <span class="rounded-full bg-[#03121a]/15 px-2 py-0.5 text-[11px] font-bold">{d.exeNote}</span>
+            </span>
+            <span class="mt-1 block truncate font-mono text-xs opacity-75">Dzerly_{SITE.version}_x64-setup.exe · ±3 MB</span>
+          </span>
+          <Icon name="download" size={22} class="shrink-0 transition-transform group-hover:translate-y-0.5" />
+        </a>
+        <a href={SITE.downloads.msi} download class="dl-card group glass">
+          <span class="dl-ico bg-surface-2"><Icon name="archive" size={22} class="text-cyan-ink" /></span>
+          <span class="min-w-0 flex-1">
+            <span class="block text-lg font-bold">{d.msi}</span>
+            <span class="mt-0.5 block text-sm text-muted">{d.msiNote}</span>
+            <span class="mt-1 block truncate font-mono text-xs text-muted">Dzerly_{SITE.version}_x64_en-US.msi · ±5 MB</span>
+          </span>
+          <Icon name="download" size={22} class="shrink-0 text-muted transition-transform group-hover:translate-y-0.5" />
+        </a>
+
+        <div class="rounded-[23px] border border-[#ffd166]/30 bg-[#ffd166]/[.07] p-5 text-sm leading-relaxed">
+          <p class="flex gap-2.5">
+            <Icon name="shield" size={18} class="mt-0.5 shrink-0 text-[#e0a526]" />
+            <span>{d.smartscreen}</span>
+          </p>
+          <div class="mt-4 flex flex-wrap items-center gap-2 pl-7 text-xs font-semibold" aria-hidden="true">
+            <span class="ss-btn">More info</span>
+            <Icon name="arrow-right" size={14} class="text-muted" />
+            <span class="ss-btn ss-run">Run anyway</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dl-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.4rem;
+    border-radius: 23px;
+    transition: transform 0.35s var(--ease-spring), box-shadow 0.3s;
+  }
+  .dl-card:hover {
+    transform: translateY(-3px);
+  }
+  .dl-main {
+    color: #03121a;
+    background: linear-gradient(110deg, #2ad4ff, #7fe6ff 50%, #ffc24d);
+    box-shadow: 0 20px 50px -20px rgb(42 212 255 / 0.7);
+  }
+  .dl-main:hover {
+    box-shadow: 0 26px 60px -20px rgb(255 154 31 / 0.7);
+  }
+  .dl-ico {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    flex: none;
+    border-radius: 16px;
+    background: #05070d;
+  }
+  .ss-btn {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  .ss-run {
+    border-color: #2ad4ff;
+    animation: pulse-ring 1.8s ease-out infinite;
+  }
+</style>

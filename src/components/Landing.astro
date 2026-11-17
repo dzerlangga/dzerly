@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from './Navbar.astro';
+import Hero from './Hero.astro';
+import HowItWorks from './HowItWorks.astro';
+import Highlights from './Highlights.astro';
+import FeatureGrid from './FeatureGrid.astro';
+import MediaBridge from './MediaBridge.astro';
+import Personalize from './Personalize.astro';
+import Privacy from './Privacy.astro';
+import Download from './Download.astro';
+import Faq from './Faq.astro';
+import Cta from './Cta.astro';
+import Footer from './Footer.astro';
+import CommandPalette from './CommandPalette.astro';
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+---
+
+<Layout lang={lang} title={t.meta.title} description={t.meta.description}>
+  <Navbar t={t} lang={lang} />
+  <main>
+    <Hero t={t} lang={lang} />
+    <HowItWorks t={t} />
+    <Highlights t={t} lang={lang} />
+    <FeatureGrid t={t} />
+    <MediaBridge t={t} />
+    <Personalize t={t} lang={lang} />
+    <Privacy t={t} />
+    <Download t={t} />
+    <Faq t={t} />
+    <Cta t={t} />
+  </main>
+  <Footer t={t} lang={lang} />
+  <CommandPalette t={t} />
+</Layout>
+
+<script>
+  import '../scripts/main';
+</script>

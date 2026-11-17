@@ -1,0 +1,102 @@
+---
+import Icon from './Icon.astro';
+import type { Content } from '../i18n/content';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+---
+
+<section id="privasi" class="relative py-24 sm:py-32">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+      <div data-reveal>
+        <p class="eyebrow">{t.privacy.eyebrow}</p>
+        <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{t.privacy.title}</h2>
+
+        <!-- Ilustrasi: perisai berdenyut di tengah orbit -->
+        <div class="shield-wrap mt-12" aria-hidden="true">
+          <span class="orbit o1"><i></i></span>
+          <span class="orbit o2"><i></i></span>
+          <span class="orbit o3"><i></i></span>
+          <span class="core"><Icon name="shield-check" size={40} stroke={1.6} /></span>
+        </div>
+      </div>
+
+      <ul class="grid gap-3">
+        {
+          t.privacy.points.map((pt, i) => (
+            <li class="spot glass flex gap-5 rounded-[23px] p-6 sm:p-7" data-reveal style={`--d:${i + 1}`}>
+              <span class="ico">
+                <Icon name={pt.icon} size={22} />
+              </span>
+              <div>
+                <h3 class="text-lg font-bold">{pt.title}</h3>
+                <p class="mt-1.5 leading-relaxed text-muted">{pt.desc}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ico {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    color: var(--cyan-ink);
+    background: linear-gradient(135deg, rgb(42 212 255 / 0.15), rgb(255 154 31 / 0.08));
+    border: 1px solid rgb(42 212 255 / 0.18);
+  }
+  .shield-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin-inline: auto;
+  }
+  @media (min-width: 1024px) {
+    .shield-wrap {
+      margin-inline: 0;
+    }
+  }
+  .core {
+    position: absolute;
+    inset: 60px;
+    display: grid;
+    place-items: center;
+    border-radius: 32px;
+    color: #03121a;
+    background: linear-gradient(135deg, #2ad4ff, #ff9a1f);
+    box-shadow: 0 20px 60px -15px rgb(42 212 255 / 0.6);
+    animation: float 5s ease-in-out infinite;
+  }
+  .orbit {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed var(--line);
+    animation: spin-slow linear infinite;
+  }
+  .orbit i {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    border-radius: 50%;
+    background: #2ad4ff;
+    box-shadow: 0 0 12px #2ad4ff;
+  }
+  .o1 { inset: 30px; animation-duration: 9s; }
+  .o2 { inset: 8px; animation-duration: 14s; animation-direction: reverse; }
+  .o2 i { background: #ff9a1f; box-shadow: 0 0 12px #ff9a1f; }
+  .o3 { inset: -14px; animation-duration: 22s; }
+  .o3 i { width: 6px; height: 6px; top: -3px; }
+</style>

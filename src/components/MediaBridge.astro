@@ -1,0 +1,242 @@
+---
+import Icon from './Icon.astro';
+import { SITE } from '../config';
+import type { Content } from '../i18n/content';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+const b = t.bridge;
+const installHref = SITE.extensionStoreUrl || '#ekstensi-manual';
+---
+
+<section id="ekstensi" class="relative overflow-hidden py-24 sm:py-32">
+  <div class="orb top-10 right-[-10rem] h-[28rem] w-[28rem] bg-[#ff9a1f] opacity-[calc(var(--glow)*0.45)]" aria-hidden="true"></div>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="glass relative overflow-hidden rounded-[32px] p-6 sm:p-10 lg:p-14">
+      <div class="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
+        <div data-reveal>
+          <p class="eyebrow">{b.eyebrow}</p>
+          <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-[2.6rem] sm:leading-[1.1]">{b.title}</h2>
+          <p class="mt-5 leading-relaxed text-muted">{b.desc}</p>
+
+          <p class="mt-8 text-xs font-bold tracking-wider text-muted uppercase">{b.supported}</p>
+          <ul class="mt-3 flex flex-wrap gap-2">
+            {b.services.map((s) => <li class="svc">{s}</li>)}
+          </ul>
+
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href={installHref} class="btn btn-primary" data-install {...(SITE.extensionStoreUrl ? { target: '_blank', rel: 'noopener' } : {})}>
+              <Icon name="puzzle" size={17} />
+              {b.install}
+            </a>
+            <span class="text-xs text-muted">Chrome · Edge</span>
+          </div>
+
+          <p class="mt-6 flex gap-2.5 rounded-2xl border border-line bg-surface p-4 text-[13px] leading-relaxed text-muted">
+            <Icon name="lock" size={16} class="mt-0.5 shrink-0 text-cyan-ink" />
+            {b.privacy}
+          </p>
+        </div>
+
+        <!-- Diagram aliran: tab browser → localhost → kapsul -->
+        <div class="flow" data-reveal style="--d:2" aria-hidden="true">
+          <div class="browser">
+            <div class="flex items-center gap-1.5 border-b border-white/[.07] px-3 py-2.5">
+              <i class="size-2.5 rounded-full bg-[#ff5f57]"></i><i class="size-2.5 rounded-full bg-[#febc2e]"></i><i class="size-2.5 rounded-full bg-[#28c840]"></i>
+              <span class="ml-3 flex-1 truncate rounded-md bg-white/[.06] px-2.5 py-1 font-mono text-[10.5px] text-[#8da0b5]">music.example.com/watch</span>
+              <span class="ext-ico"><Icon name="puzzle" size={12} /></span>
+            </div>
+            <div class="flex items-center gap-3 p-4">
+              <div class="grid size-12 place-items-center rounded-xl bg-gradient-to-br from-[#ff6b6b] to-[#ff9a1f] text-white"><Icon name="play" size={16} /></div>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-bold text-white">{t.mock.music.song}</p>
+                <p class="text-[11px] text-[#8da0b5]">{t.mock.music.artist}</p>
+                <div class="mt-2 h-1 overflow-hidden rounded-full bg-white/10"><i class="prog block h-full rounded-full bg-white/70"></i></div>
+              </div>
+            </div>
+            <span class="label">{b.tab}</span>
+          </div>
+
+          <div class="pipe">
+            <span class="packet p1">♪</span>
+            <span class="packet p2">♪</span>
+            <span class="packet p3">♪</span>
+            <span class="pipe-tag font-mono">127.0.0.1 · {b.sent}</span>
+          </div>
+
+          <div class="capsule">
+            <span class="robot-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+            <Icon name="music" size={13} class="shrink-0 text-cyan" />
+            <span class="truncate" id="bridge-lyric">{t.highlights.music.lyrics[1]}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panduan manual -->
+      <div id="ekstensi-manual" class="mt-12 scroll-mt-28 rounded-[23px] border border-line bg-surface p-5 sm:p-7" data-reveal>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <h3 class="flex items-center gap-2.5 text-lg font-bold"><Icon name="puzzle" size={18} class="text-cyan-ink" />{b.manualTitle}</h3>
+          <a href={SITE.downloads.extensionZip} download class="btn btn-ghost btn-sm">
+            <Icon name="download" size={15} />
+            {b.download}
+          </a>
+        </div>
+        <ol class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {
+            b.manualSteps.map((s, i) => (
+              <li class="relative rounded-2xl border border-line p-4 text-sm leading-relaxed">
+                <span class="mb-2 block font-mono text-xs font-bold text-cyan-ink">0{i + 1}</span>
+                <span set:html={s.replace(/(chrome:\/\/extensions|edge:\/\/extensions)/g, '<code class="rounded bg-surface-2 px-1 font-mono text-[12px]">$1</code>')} />
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .svc {
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.25s var(--ease-spring);
+  }
+  .svc:hover {
+    border-color: rgb(42 212 255 / 0.4);
+    transform: translateY(-2px);
+  }
+
+  .flow {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0;
+    padding: 0.5rem 0;
+  }
+  .browser {
+    position: relative;
+    width: min(100%, 380px);
+    border-radius: 18px;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    background: #0b111d;
+    color: #d6e3ef;
+    box-shadow: 0 30px 60px -25px rgb(0 0 0 / 0.6);
+    transform: rotate(-2deg);
+  }
+  .ext-ico {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    color: #03121a;
+    background: #2ad4ff;
+    animation: pulse-ring 1.8s ease-out infinite;
+  }
+  .prog {
+    width: 40%;
+    animation: prog 9s linear infinite;
+  }
+  @keyframes prog {
+    from { width: 10%; }
+    to { width: 95%; }
+  }
+  .label {
+    position: absolute;
+    left: -10px;
+    top: -12px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #03121a;
+    background: #ffd166;
+    transform: rotate(-4deg);
+  }
+  .pipe {
+    position: relative;
+    width: 2px;
+    height: 120px;
+    background: repeating-linear-gradient(to bottom, rgb(42 212 255 / 0.6) 0 6px, transparent 6px 12px);
+    background-size: 2px 12px;
+    animation: dash 0.6s linear infinite;
+  }
+  @keyframes dash {
+    to { background-position: 0 12px; }
+  }
+  .packet {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    border-radius: 50%;
+    font-size: 11px;
+    color: #03121a;
+    background: linear-gradient(135deg, #2ad4ff, #ff9a1f);
+    box-shadow: 0 0 16px rgb(42 212 255 / 0.7);
+    animation: travel 2.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+  .p2 { animation-delay: 0.8s; }
+  .p3 { animation-delay: 1.6s; }
+  @keyframes travel {
+    0% { top: -6px; opacity: 0; transform: scale(0.5); }
+    15% { opacity: 1; transform: scale(1); }
+    85% { opacity: 1; transform: scale(1); }
+    100% { top: calc(100% - 16px); opacity: 0; transform: scale(0.5); }
+  }
+  .pipe-tag {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    translate: 0 -50%;
+    padding: 3px 9px;
+    border-radius: 8px;
+    font-size: 10.5px;
+    white-space: nowrap;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+  .capsule {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(100%, 330px);
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid rgb(42 212 255 / 0.3);
+    background: #060a12;
+    color: #fff;
+    font-size: 13px;
+    box-shadow:
+      0 20px 40px -18px rgb(0 0 0 / 0.8),
+      0 0 40px -10px rgb(42 212 255 / 0.5);
+  }
+</style>
+
+<script>
+  // Lirik di kapsul diagram ikut berganti
+  const el = document.getElementById('bridge-lyric');
+  const src = document.getElementById('island-lyric');
+  if (el && src) {
+    const lines: string[] = JSON.parse(src.dataset.lyrics || '[]');
+    let i = 1;
+    setInterval(() => {
+      i = (i + 1) % lines.length;
+      el.textContent = lines[i];
+      el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: 'ease-out' });
+    }, 2400);
+  }
+</script>

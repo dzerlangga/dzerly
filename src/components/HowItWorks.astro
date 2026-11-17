@@ -1,0 +1,344 @@
+---
+import Icon from './Icon.astro';
+import type { Content } from '../i18n/content';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+---
+
+<section id="cara-kerja" class="relative py-24 sm:py-32">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="max-w-2xl" data-reveal>
+      <p class="eyebrow">{t.how.eyebrow}</p>
+      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{t.how.title}</h2>
+    </div>
+
+    <div class="mt-12 grid items-center gap-8 lg:mt-16 lg:grid-cols-[1fr_1.15fr] lg:gap-14" id="how">
+      <ol class="grid gap-3" data-reveal>
+        {
+          t.how.steps.map((s, i) => (
+            <li>
+              <button class="how-step spot glass w-full rounded-[23px] p-5 text-left sm:p-6" data-step-btn={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+                <div class="flex items-start gap-4">
+                  <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <h3 class="text-lg font-bold">{s.title}</h3>
+                    <p class="mt-1.5 text-sm leading-relaxed text-muted">{s.desc}</p>
+                  </div>
+                </div>
+                <span class="bar" aria-hidden="true">
+                  <i />
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="mini-wrap" data-reveal style="--d:2">
+        <div class="mini" id="mini" data-step="0" aria-hidden="true">
+          <div class="mini-wall"></div>
+          <div class="edge"></div>
+          <div class="cap">
+            <span class="robot-eyes"><i class="eye"></i><i class="eye"></i></span>
+            <span class="cap-time" data-clock>09.41</span>
+            <span class="cap-rows"><i></i><i></i><i></i><i></i></span>
+          </div>
+          <span class="autohide"><Icon name="eye-off" size={12} />auto-hide</span>
+          <span class="cursor"><Icon name="mouse-pointer" size={22} /><i class="click"></i></span>
+          <div class="mini-taskbar"><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-step {
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, background-color 0.3s, transform 0.3s var(--ease-spring);
+  }
+  .how-step:hover {
+    transform: translateX(4px);
+  }
+  .how-step[aria-pressed='true'] {
+    border-color: rgb(42 212 255 / 0.35);
+    background: var(--surface-2);
+  }
+  .num {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    transition: all 0.3s;
+  }
+  .how-step[aria-pressed='true'] .num {
+    color: #03121a;
+    border-color: transparent;
+    background: linear-gradient(135deg, #2ad4ff, #ff9a1f);
+  }
+  .bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+  }
+  .bar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #2ad4ff, #ff9a1f);
+  }
+  .how-step[aria-pressed='true'] .bar i {
+    animation: fill var(--dur, 5s) linear forwards;
+  }
+  #how.paused .bar i {
+    animation-play-state: paused;
+  }
+  @keyframes fill {
+    to {
+      width: 100%;
+    }
+  }
+
+  /* ---------- Mini desktop ---------- */
+  .mini-wrap {
+    container-type: inline-size;
+  }
+  .mini {
+    position: relative;
+    aspect-ratio: 16 / 10.5;
+    overflow: hidden;
+    border-radius: 23px;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    background: #070b15;
+    box-shadow: 0 40px 90px -30px rgb(0 0 0 / 0.6);
+    font-size: 2.2cqw;
+  }
+  .mini-wall {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 70% at 20% 90%, rgb(26 163 255 / 0.45), transparent 70%),
+      radial-gradient(50% 60% at 85% 80%, rgb(255 154 31 / 0.35), transparent 70%),
+      linear-gradient(170deg, #0a1020, #05070d);
+  }
+  .edge {
+    position: absolute;
+    top: 0;
+    left: 35%;
+    width: 30%;
+    height: 3%;
+    border-radius: 0 0 999px 999px;
+    background: linear-gradient(90deg, transparent, rgb(42 212 255 / 0.8), transparent);
+    opacity: 0;
+  }
+  .mini-taskbar {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.4%;
+    background: rgb(12 16 26 / 0.8);
+  }
+  .mini-taskbar i {
+    width: 3.2%;
+    aspect-ratio: 1;
+    border-radius: 22%;
+    background: rgb(255 255 255 / 0.14);
+  }
+  .cap {
+    position: absolute;
+    top: 3.5%;
+    left: 50%;
+    translate: -50% 0;
+    width: 36%;
+    height: 8%;
+    display: flex;
+    align-items: flex-start;
+    gap: 4%;
+    padding: 0 4%;
+    overflow: hidden;
+    border-radius: 2em;
+    background: #060a12;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    box-shadow: 0 12px 30px -10px rgb(0 0 0 / 0.8);
+  }
+  /* tinggi kapsul ciut = 8% dari tinggi mini (16:10.5) = 5.25cqw */
+  .cap .robot-eyes {
+    height: 5.25cqw;
+  }
+  .cap-time {
+    color: #fff;
+    font-weight: 700;
+    line-height: 5.25cqw;
+    font-variant-numeric: tabular-nums;
+  }
+  .cap-rows {
+    position: absolute;
+    inset: 22% 6% 8%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6%;
+    opacity: 0;
+  }
+  .cap-rows i {
+    border-radius: 0.7em;
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(255 255 255 / 0.06);
+  }
+  .cap-rows i:first-child {
+    background: rgb(42 212 255 / 0.18);
+  }
+  .autohide {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.35em 0.8em;
+    border-radius: 99px;
+    font-weight: 600;
+    color: #cfe9ff;
+    background: rgb(42 212 255 / 0.12);
+    border: 1px solid rgb(42 212 255 / 0.25);
+    opacity: 0;
+    white-space: nowrap;
+  }
+  .cursor {
+    position: absolute;
+    left: 66%;
+    top: 62%;
+    color: #fff;
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.6));
+    z-index: 3;
+  }
+  .cursor :global(svg) {
+    width: 3.4cqw;
+    height: 3.4cqw;
+  }
+  .click {
+    position: absolute;
+    left: -0.6cqw;
+    top: -0.6cqw;
+    width: 2cqw;
+    height: 2cqw;
+    border-radius: 50%;
+    border: 2px solid #2ad4ff;
+    opacity: 0;
+  }
+
+  /* Langkah 1: tampil → sembunyi otomatis */
+  .mini[data-step='0'] .cap { animation: s0-cap 5s var(--ease-out-expo) forwards; }
+  .mini[data-step='0'] .autohide { animation: s0-chip 5s ease forwards; }
+  .mini[data-step='0'] .cursor { animation: s0-cur 5s ease-in-out forwards; }
+  @keyframes s0-cap {
+    0%, 45% { transform: translateY(0); opacity: 1; }
+    60%, 100% { transform: translateY(-160%); opacity: 0; }
+  }
+  @keyframes s0-chip {
+    0%, 15% { opacity: 0; }
+    25%, 50% { opacity: 1; }
+    62%, 100% { opacity: 0; }
+  }
+  @keyframes s0-cur {
+    0% { left: 66%; top: 62%; }
+    100% { left: 72%; top: 70%; }
+  }
+
+  /* Langkah 2: klik → panel mengembang */
+  .mini[data-step='1'] .cursor { animation: s1-cur 5s cubic-bezier(0.6, 0, 0.3, 1) forwards; }
+  .mini[data-step='1'] .click { animation: s1-click 5s ease forwards; }
+  .mini[data-step='1'] .cap { animation: s1-cap 5s cubic-bezier(0.32, 1.25, 0.5, 1) forwards; }
+  .mini[data-step='1'] .cap-rows { animation: s1-rows 5s ease forwards; }
+  .mini[data-step='1'] .cap-time { animation: s1-time 5s ease forwards; }
+  @keyframes s1-cur {
+    0% { left: 66%; top: 62%; }
+    32%, 100% { left: 52%; top: 7%; }
+  }
+  @keyframes s1-click {
+    0%, 33% { opacity: 0; transform: scale(0.4); }
+    36% { opacity: 1; transform: scale(1); }
+    46%, 100% { opacity: 0; transform: scale(2.4); }
+  }
+  @keyframes s1-cap {
+    0%, 36% { width: 36%; height: 8%; border-radius: 2em; }
+    56%, 100% { width: 64%; height: 64%; border-radius: 1.2em; }
+  }
+  @keyframes s1-rows {
+    0%, 50% { opacity: 0; transform: translateY(8px); }
+    64%, 100% { opacity: 1; transform: none; }
+  }
+  @keyframes s1-time {
+    0%, 40% { opacity: 1; }
+    48%, 100% { opacity: 0.9; }
+  }
+
+  /* Langkah 3: arahkan ke tepi atas → muncul lagi */
+  .mini[data-step='2'] .cap { animation: s2-cap 5s var(--ease-spring) forwards; }
+  .mini[data-step='2'] .cursor { animation: s2-cur 5s cubic-bezier(0.6, 0, 0.3, 1) forwards; }
+  .mini[data-step='2'] .edge { animation: s2-edge 5s ease forwards; }
+  @keyframes s2-cap {
+    0%, 40% { transform: translateY(-160%); opacity: 0; }
+    52%, 100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes s2-cur {
+    0% { left: 30%; top: 64%; }
+    36% { left: 49%; top: 0.5%; }
+    60% { left: 49%; top: 0.5%; }
+    100% { left: 58%; top: 26%; }
+  }
+  @keyframes s2-edge {
+    0%, 30% { opacity: 0; }
+    38%, 52% { opacity: 1; }
+    65%, 100% { opacity: 0; }
+  }
+</style>
+
+<script>
+  const root = document.getElementById('how')!;
+  const mini = document.getElementById('mini')!;
+  const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-step-btn]')];
+  const DUR = 5200;
+  let step = 0;
+  let timer = 0;
+  let visible = false;
+
+  const go = (i: number) => {
+    step = i;
+    btns.forEach((b, k) => {
+      b.setAttribute('aria-pressed', String(k === i));
+      b.style.setProperty('--dur', `${DUR}ms`);
+    });
+    // Mulai ulang animasi
+    mini.dataset.step = '';
+    void mini.offsetWidth;
+    mini.dataset.step = String(i);
+    clearTimeout(timer);
+    if (visible) timer = window.setTimeout(() => go((step + 1) % btns.length), DUR);
+  };
+
+  btns.forEach((b, i) => b.addEventListener('click', () => go(i)));
+
+  new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting;
+    root.classList.toggle('paused', !visible);
+    if (visible) go(step);
+    else clearTimeout(timer);
+  }, { threshold: 0.35 }).observe(root);
+</script>

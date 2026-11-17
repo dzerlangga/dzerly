@@ -1,0 +1,585 @@
+---
+import Icon from './Icon.astro';
+import { content, type Content, type Lang } from '../i18n/content';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+}
+const { t, lang } = Astro.props;
+const p = t.personalize;
+
+const PALETTES = {
+  dzerly: ['#2ad4ff', '#ff9a1f'],
+  matcha: ['#8fe0c1', '#55c89d'],
+  senja: ['#ffb38a', '#f08a5d'],
+  neon: ['#7df9ff', '#c77dff'],
+  ocean: ['#6cb8ff', '#3b82f6'],
+  sakura: ['#ff9ec7', '#f0609e'],
+  lavender: ['#b9a6ff', '#8b6cf6'],
+  gold: ['#ffd166', '#e0a526'],
+  mono: ['#e6e6e6', '#a3a3a3'],
+} as const;
+const STYLES = ['solid', 'glass', 'frost', 'amoled', 'aurora', 'minimal'] as const;
+const STYLE_NAMES: Record<string, string> = { solid: 'Solid', glass: 'Glass', frost: 'Frosted', amoled: 'AMOLED', aurora: 'Aurora', minimal: 'Minimal' };
+const EYE_COLORS = ['', '#2ad4ff', '#ff9a1f', '#8fe0c1', '#ffb38a', '#7df9ff', '#ff7aa8', '#ffe066', '#ffffff'];
+
+// Label pratinjau dalam dua bahasa (untuk pengalih bahasa di pratinjau)
+const pv = (c: Content) => ({
+  tabs: c.mock.tabs.slice(0, 3),
+  next: c.mock.prayer.next,
+  maghrib: c.mock.prayer.names[3],
+  todo: c.mock.today.todo,
+  items: c.mock.today.todoItems.slice(0, 2),
+  weather: c.mock.weather,
+});
+const pvText = { id: pv(content.id), en: pv(content.en) };
+const cur = pvText[lang];
+---
+
+<section id="personalisasi" class="relative py-24 sm:py-32">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center" data-reveal>
+      <p class="eyebrow">{p.eyebrow}</p>
+      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{p.title}</h2>
+      <p class="mt-4 text-muted">{p.subtitle}</p>
+    </div>
+
+    <div class="mt-14 grid gap-6 lg:grid-cols-[1.15fr_1fr]" data-reveal style="--d:1">
+      <!-- Pratinjau -->
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <div class="pv-stage" id="pv-stage">
+          <div class="pv-wall" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div
+            class="pv"
+            id="pv"
+            data-style="solid"
+            data-mode="dark"
+            data-text={JSON.stringify(pvText)}
+            style="--mint:#2ad4ff;--mint-strong:#ff9a1f;--radius:23px;--op:.6;--scale:1"
+          >
+            <div class="pv-cap">
+              <span class="robot-eyes" id="pv-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+              <span class="w-clock font-semibold tabular-nums" data-clock>09.41</span>
+              <span class="w-weather flex items-center gap-1"><Icon name="cloud-sun" size={14} />28°</span>
+              <span class="w-battery flex items-center gap-1"><Icon name="battery" size={15} />86%</span>
+            </div>
+            <div class="pv-panel">
+              <div class="flex items-center gap-2">
+                <span class="pv-dot"></span>
+                <span class="text-[13px] font-bold">Dzerly</span>
+                <span class="pv-chip ml-auto" data-date>Sel, 17 Nov</span>
+              </div>
+              <div class="pv-tabs">
+                {cur.tabs.map((tb, i) => <span class:list={['pv-tab', i === 0 && 'on']} data-pv-tab={i}>{tb}</span>)}
+              </div>
+              <div class="grid gap-2 sm:grid-cols-2">
+                <div class="pv-card">
+                  <p class="pv-muted text-[10.5px]" data-pv="next">{cur.next}</p>
+                  <p class="text-[14px] font-bold"><span data-pv="maghrib">{cur.maghrib}</span> · 17.52</p>
+                  <div class="pv-meter"><i></i></div>
+                </div>
+                <div class="pv-card">
+                  <p class="pv-muted text-[10.5px]" data-pv="todo">{cur.todo}</p>
+                  {
+                    cur.items.map((it, i) => (
+                      <p class="flex items-center gap-2 text-[12px]">
+                        <span class:list={['pv-box', i === 0 && 'on']} />
+                        <span data-pv-item={i}>{it}</span>
+                      </p>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ul class="mt-6 grid gap-2 text-sm text-muted sm:grid-cols-2">
+          {
+            p.points.map((pt) => (
+              <li class="flex gap-2">
+                <Icon name="check" size={16} class="mt-0.5 shrink-0 text-cyan-ink" />
+                {pt}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Kontrol -->
+      <div class="glass grid gap-6 rounded-[23px] p-5 sm:p-7" id="pv-controls">
+        <fieldset>
+          <legend class="ctl-label">{p.palette}</legend>
+          <div class="flex flex-wrap gap-1.5">
+            {
+              Object.entries(PALETTES).map(([k, [a, s]], i) => (
+                <button
+                  class="sw"
+                  data-palette={k}
+                  data-a={a}
+                  data-s={s}
+                  aria-pressed={i === 0 ? 'true' : 'false'}
+                  title={p.palettes[k as keyof typeof p.palettes]}
+                  aria-label={p.palettes[k as keyof typeof p.palettes]}
+                  style={`--a:${a};--s:${s}`}
+                />
+              ))
+            }
+            <label class="sw sw-custom" title={p.custom} aria-label={p.custom}>
+              <Icon name="plus" size={14} />
+              <input type="color" value="#2ad4ff" id="pv-custom" class="absolute inset-0 cursor-pointer opacity-0" />
+            </label>
+          </div>
+          <p class="mt-2 text-xs font-semibold text-muted" id="pv-palette-name">{p.palettes.dzerly}</p>
+        </fieldset>
+
+        <fieldset>
+          <legend class="ctl-label">{p.style}</legend>
+          <div class="grid grid-cols-3 gap-2">
+            {
+              STYLES.map((s, i) => (
+                <button class="seg" data-style-btn={s} aria-pressed={i === 0 ? 'true' : 'false'}>
+                  <span class={`seg-prev prev-${s}`} />
+                  {STYLE_NAMES[s]}
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="grid gap-5 sm:grid-cols-2">
+          <fieldset>
+            <legend class="ctl-label">{p.theme}</legend>
+            <div class="seg-row">
+              <button class="seg2" data-pv-theme="dark" aria-pressed="true"><Icon name="moon" size={14} />{p.dark}</button>
+              <button class="seg2" data-pv-theme="light" aria-pressed="false"><Icon name="sun" size={14} />{p.light}</button>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="ctl-label">{p.language}</legend>
+            <div class="seg-row">
+              <button class="seg2" data-pv-lang="id" aria-pressed={lang === 'id' ? 'true' : 'false'}>Indonesia</button>
+              <button class="seg2" data-pv-lang="en" aria-pressed={lang === 'en' ? 'true' : 'false'}>English</button>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-3">
+          <label class="rng">
+            <span class="ctl-label">{p.radius} <output id="o-radius">23</output></span>
+            <input type="range" min="8" max="32" value="23" data-range="radius" />
+          </label>
+          <label class="rng">
+            <span class="ctl-label">{p.opacity} <output id="o-op">60</output></span>
+            <input type="range" min="20" max="100" value="60" data-range="op" />
+          </label>
+          <label class="rng">
+            <span class="ctl-label">{p.scale} <output id="o-scale">100</output></span>
+            <input type="range" min="85" max="115" value="100" data-range="scale" />
+          </label>
+        </div>
+
+        <fieldset>
+          <legend class="ctl-label">{p.eyes}</legend>
+          <div class="flex flex-wrap gap-1.5">
+            {
+              p.moods.map(([k, label], i) => (
+                <button class="pill" data-mood={k} aria-pressed={i === 0 ? 'true' : 'false'}>
+                  {label}
+                </button>
+              ))
+            }
+          </div>
+          <div class="mt-3 flex flex-wrap items-center gap-2">
+            <span class="text-xs text-muted">{p.eyeColor}</span>
+            {
+              EYE_COLORS.map((c, i) => (
+                <button
+                  class="eye-sw"
+                  data-eye={c}
+                  aria-pressed={i === 0 ? 'true' : 'false'}
+                  aria-label={c || 'auto'}
+                  style={c ? `background:${c}` : ''}
+                >
+                  {!c && <span>A</span>}
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="ctl-label">{p.widgets}</legend>
+          <div class="flex flex-wrap gap-1.5">
+            {
+              Object.entries(p.widgetNames).map(([k, label]) => (
+                <button class="pill" data-widget={k} aria-pressed="true">
+                  <Icon name="check" size={12} class="pill-check" />
+                  {label}
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ctl-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .ctl-label output {
+    font-family: var(--font-mono);
+    color: var(--text);
+  }
+
+  .sw {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--a) 50%, var(--s) 50%);
+    border: 2px solid transparent;
+    box-shadow: inset 0 0 0 3px var(--bg);
+    transition: transform 0.3s var(--ease-spring), border-color 0.2s;
+  }
+  .sw:hover {
+    transform: scale(1.1);
+  }
+  .sw[aria-pressed='true'] {
+    border-color: var(--text);
+  }
+  .sw-custom {
+    background: conic-gradient(#ff6b6b, #ffd166, #8fe0c1, #2ad4ff, #b9a6ff, #ff9ec7, #ff6b6b);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .seg {
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.4rem;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .seg:hover {
+    color: var(--text);
+  }
+  .seg[aria-pressed='true'] {
+    color: var(--text);
+    border-color: rgb(42 212 255 / 0.55);
+    background: rgb(42 212 255 / 0.08);
+  }
+  .seg-prev {
+    width: 100%;
+    height: 26px;
+    border-radius: 8px;
+    border: 1px solid rgb(255 255 255 / 0.1);
+  }
+  .prev-solid { background: #0f1520; }
+  .prev-glass { background: linear-gradient(135deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.04)), linear-gradient(90deg, #1aa3ff55, #ff9a1f55); }
+  .prev-frost { background: linear-gradient(135deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0.15)), linear-gradient(90deg, #1aa3ff, #ff9a1f); }
+  .prev-amoled { background: #000; }
+  .prev-aurora { background: radial-gradient(110% 80% at 0% 0%, #2ad4ff88, transparent 60%), radial-gradient(90% 70% at 100% 100%, #ff9a1f88, transparent 62%), #0f1513; }
+  .prev-minimal { background: #161b22; border-color: transparent; }
+
+  .seg-row {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+  }
+  .seg2 {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 2.1rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .seg2[aria-pressed='true'] {
+    color: var(--text);
+    background: var(--surface-2);
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.15);
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s var(--ease-spring);
+  }
+  .pill:active {
+    transform: scale(0.95);
+  }
+  .pill[aria-pressed='true'] {
+    color: var(--text);
+    border-color: rgb(42 212 255 / 0.55);
+    background: rgb(42 212 255 / 0.1);
+  }
+  .pill :global(.pill-check) {
+    display: none;
+  }
+  .pill[aria-pressed='true'] :global(.pill-check) {
+    display: block;
+    color: var(--cyan-ink);
+  }
+  .eye-sw {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    transition: transform 0.2s var(--ease-spring);
+  }
+  .eye-sw:hover {
+    transform: scale(1.15);
+  }
+  .eye-sw[aria-pressed='true'] {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  .rng input {
+    width: 100%;
+    accent-color: #2ad4ff;
+  }
+
+  /* ---------- Pratinjau ---------- */
+  .pv-stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    min-height: 340px;
+    padding: 22px 16px 32px;
+    overflow: hidden;
+    border-radius: 28px;
+    border: 1px solid var(--line);
+  }
+  .pv-wall {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #0d1426, #070a12);
+  }
+  .pv-wall i {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(30px);
+  }
+  .pv-wall i:nth-child(1) { width: 55%; aspect-ratio: 1; left: -10%; top: 30%; background: #1aa3ff; opacity: 0.7; }
+  .pv-wall i:nth-child(2) { width: 45%; aspect-ratio: 1; right: -8%; top: 45%; background: #ff9a1f; opacity: 0.65; }
+  .pv-wall i:nth-child(3) { width: 30%; aspect-ratio: 1; left: 40%; top: 10%; background: #c77dff; opacity: 0.45; }
+
+  .pv {
+    --bgc: #0f1520;
+    --txt: #e2ecf6;
+    --mut: #8da0b5;
+    --card: rgb(255 255 255 / 0.05);
+    --ln: rgb(255 255 255 / 0.08);
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    width: min(100%, 440px);
+    transform: scale(var(--scale));
+    transform-origin: top center;
+    transition: transform 0.4s var(--ease-spring);
+    color: var(--txt);
+  }
+  .pv-cap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    background: #060a12;
+    color: #e2ecf6;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.8);
+  }
+  .pv-cap .robot-eyes .eye {
+    --eye: var(--eye-c, var(--mint));
+  }
+  .pv-cap > [class^='w-'] {
+    transition: opacity 0.25s, max-width 0.35s ease;
+    max-width: 90px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .pv-cap > .off {
+    opacity: 0;
+    max-width: 0;
+    margin-left: -12px;
+  }
+  .pv-cap .w-weather :global(svg) { color: #ffd166; }
+  .pv-cap .w-battery :global(svg) { color: var(--mint); }
+
+  .pv-panel {
+    width: 100%;
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+    border-radius: var(--radius);
+    background: var(--bgc);
+    border: 1px solid var(--ln);
+    box-shadow: 0 30px 60px -25px rgb(0 0 0 / 0.7);
+    transition: background 0.4s, border-radius 0.3s, color 0.3s;
+  }
+  .pv-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 10px var(--mint); }
+  .pv-chip { padding: 3px 8px; border-radius: 8px; font-size: 10.5px; color: var(--mut); background: var(--card); border: 1px solid var(--ln); }
+  .pv-tabs { display: flex; gap: 3px; padding: 3px; border-radius: calc(var(--radius) * 0.5); background: var(--card); }
+  .pv-tab { flex: 1; padding: 5px 4px; border-radius: calc(var(--radius) * 0.4); text-align: center; font-size: 11px; font-weight: 600; color: var(--mut); }
+  .pv-tab.on { color: #05070d; background: var(--mint); }
+  .pv-card { display: grid; gap: 6px; padding: 11px; border-radius: calc(var(--radius) * 0.65); background: var(--card); border: 1px solid var(--ln); }
+  .pv-muted { color: var(--mut); }
+  .pv-meter { height: 5px; border-radius: 5px; background: var(--ln); overflow: hidden; }
+  .pv-meter i { display: block; width: 64%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--mint), var(--mint-strong)); }
+  .pv-box { width: 13px; height: 13px; flex: none; border-radius: 4px; border: 1.5px solid var(--mut); }
+  .pv-box.on { background: var(--mint); border-color: var(--mint); }
+
+  /* Gaya panel */
+  .pv[data-mode='light'] { --bgc: #f4f7fa; --txt: #13202f; --mut: #5d6b7c; --card: rgb(15 23 42 / 0.04); --ln: rgb(15 23 42 / 0.08); }
+  .pv[data-mode='light'] .pv-cap { background: #111b28; }
+  .pv[data-style='glass'] { --bgc: rgb(10 14 22 / var(--op)); }
+  .pv[data-style='glass'][data-mode='light'] { --bgc: rgb(255 255 255 / var(--op)); }
+  .pv[data-style='glass'] .pv-panel { backdrop-filter: blur(16px); }
+  .pv[data-style='frost'] { --bgc: rgb(70 80 96 / calc(var(--op) * 0.75)); --card: rgb(255 255 255 / 0.08); }
+  .pv[data-style='frost'][data-mode='light'] { --bgc: rgb(255 255 255 / calc(var(--op) * 0.9 + 0.1)); }
+  .pv[data-style='frost'] .pv-panel { backdrop-filter: blur(34px) saturate(170%); }
+  .pv[data-style='amoled'] { --bgc: #000; --ln: rgb(255 255 255 / 0.12); --card: #0b0b0b; --txt: #f2f2f2; --mut: #8a8a8a; }
+  .pv[data-style='amoled'] .pv-cap { background: #000; }
+  .pv[data-style='aurora'] .pv-panel {
+    background:
+      radial-gradient(110% 80% at 0% 0%, color-mix(in srgb, var(--mint) 40%, transparent), transparent 60%),
+      radial-gradient(90% 70% at 100% 100%, color-mix(in srgb, var(--mint-strong) 38%, transparent), transparent 62%),
+      var(--bgc);
+  }
+  .pv[data-style='aurora'][data-mode='light'] { --card: rgb(255 255 255 / 0.6); }
+  .pv[data-style='minimal'] { --ln: transparent; }
+  .pv[data-style='minimal'] .pv-panel { box-shadow: none; }
+</style>
+
+<script>
+  const pv = document.getElementById('pv')!;
+  const ctl = document.getElementById('pv-controls')!;
+  const eyes = document.getElementById('pv-eyes')!;
+  const nameEl = document.getElementById('pv-palette-name')!;
+  const text = JSON.parse(pv.dataset.text!);
+
+  const press = (group: string, btn: Element) => {
+    ctl.querySelectorAll(`[${group}]`).forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+  };
+  const setVar = (k: string, v: string) => pv.style.setProperty(k, v);
+
+  ctl.querySelectorAll<HTMLButtonElement>('[data-palette]').forEach((b) =>
+    b.addEventListener('click', () => {
+      press('data-palette', b);
+      ctl.querySelector('.sw-custom')?.setAttribute('aria-pressed', 'false');
+      setVar('--mint', b.dataset.a!);
+      setVar('--mint-strong', b.dataset.s!);
+      nameEl.textContent = b.getAttribute('aria-label');
+    }),
+  );
+  const custom = document.getElementById('pv-custom') as HTMLInputElement;
+  custom.addEventListener('input', () => {
+    ctl.querySelectorAll('[data-palette]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    custom.parentElement!.setAttribute('aria-pressed', 'true');
+    setVar('--mint', custom.value);
+    setVar('--mint-strong', custom.value);
+    nameEl.textContent = custom.value.toUpperCase();
+  });
+
+  ctl.querySelectorAll<HTMLButtonElement>('[data-style-btn]').forEach((b) =>
+    b.addEventListener('click', () => {
+      press('data-style-btn', b);
+      pv.dataset.style = b.dataset.styleBtn!;
+    }),
+  );
+  ctl.querySelectorAll<HTMLButtonElement>('[data-pv-theme]').forEach((b) =>
+    b.addEventListener('click', () => {
+      press('data-pv-theme', b);
+      pv.dataset.mode = b.dataset.pvTheme!;
+    }),
+  );
+  ctl.querySelectorAll<HTMLButtonElement>('[data-pv-lang]').forEach((b) =>
+    b.addEventListener('click', () => {
+      press('data-pv-lang', b);
+      const tx = text[b.dataset.pvLang!];
+      pv.querySelectorAll<HTMLElement>('[data-pv-tab]').forEach((el, i) => (el.textContent = tx.tabs[i]));
+      pv.querySelectorAll<HTMLElement>('[data-pv-item]').forEach((el, i) => (el.textContent = tx.items[i]));
+      pv.querySelectorAll<HTMLElement>('[data-pv]').forEach((el) => (el.textContent = tx[el.dataset.pv!]));
+    }),
+  );
+
+  ctl.querySelectorAll<HTMLInputElement>('[data-range]').forEach((r) =>
+    r.addEventListener('input', () => {
+      const v = Number(r.value);
+      if (r.dataset.range === 'radius') {
+        setVar('--radius', `${v}px`);
+        document.getElementById('o-radius')!.textContent = String(v);
+      } else if (r.dataset.range === 'op') {
+        setVar('--op', String(v / 100));
+        document.getElementById('o-op')!.textContent = String(v);
+      } else {
+        setVar('--scale', String(v / 100));
+        document.getElementById('o-scale')!.textContent = String(v);
+      }
+    }),
+  );
+
+  ctl.querySelectorAll<HTMLButtonElement>('[data-mood]').forEach((b) =>
+    b.addEventListener('click', () => {
+      press('data-mood', b);
+      eyes.className = `robot-eyes mood-${b.dataset.mood}`;
+    }),
+  );
+  ctl.querySelectorAll<HTMLButtonElement>('[data-eye]').forEach((b) =>
+    b.addEventListener('click', () => {
+      press('data-eye', b);
+      if (b.dataset.eye) setVar('--eye-c', b.dataset.eye);
+      else pv.style.removeProperty('--eye-c');
+    }),
+  );
+  ctl.querySelectorAll<HTMLButtonElement>('[data-widget]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(on));
+      pv.querySelector(`.w-${b.dataset.widget}`)?.classList.toggle('off', !on);
+    }),
+  );
+</script>

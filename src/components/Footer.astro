@@ -1,0 +1,34 @@
+---
+import Logo from './Logo.astro';
+import { SITE } from '../config';
+import type { Content, Lang } from '../i18n/content';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+}
+const { t, lang } = Astro.props;
+---
+
+<footer class="border-t border-line py-12">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8 px-4 sm:px-6 md:flex-row md:items-center md:justify-between">
+    <div>
+      <a href="#top" class="flex items-center gap-2.5 text-lg font-extrabold">
+        <Logo size={30} />
+        Dzerly
+      </a>
+      <p class="mt-2 text-sm text-muted">{t.footer.tagline}</p>
+    </div>
+
+    <nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-muted" aria-label="Footer">
+      {t.nav.links.map((l) => <a href={l.href} class="hover:text-ink">{l.label}</a>)}
+      {SITE.contactEmail && <a href={`mailto:${SITE.contactEmail}`} class="hover:text-ink">{t.footer.contact}</a>}
+      {SITE.privacyPolicyUrl && <a href={SITE.privacyPolicyUrl} class="hover:text-ink">{t.footer.privacyPolicy}</a>}
+      <a href={lang === 'id' ? '/en/' : '/'} class="hover:text-ink">{lang === 'id' ? 'English' : 'Bahasa Indonesia'}</a>
+    </nav>
+  </div>
+  <div class="mx-auto mt-10 flex max-w-6xl flex-wrap justify-between gap-2 px-4 text-xs text-muted sm:px-6">
+    <p>© 2026 Dzerly</p>
+    <p>v{SITE.version} · Windows 10 & 11</p>
+  </div>
+</footer>

@@ -1,0 +1,667 @@
+---
+import Icon from './Icon.astro';
+import type { Content, Lang } from '../i18n/content';
+import { SAMPLE_TIMES, fmtTime } from '../scripts/prayer';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+}
+const { t, lang } = Astro.props;
+const h = t.highlights;
+const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipboard', calc: 'calc', file: 'file', cal: 'calendar', cmd: 'terminal' };
+---
+
+<section id="sorotan" class="relative py-24 sm:py-32">
+  <div class="orb top-1/3 -left-40 h-96 w-96 bg-[#1aa3ff] opacity-[calc(var(--glow)*0.5)]" aria-hidden="true"></div>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center" data-reveal>
+      <p class="eyebrow">{h.eyebrow}</p>
+      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{h.title}</h2>
+    </div>
+
+    <div class="mt-16 grid gap-24 sm:mt-24 sm:gap-32">
+      <!-- A. Pencarian -->
+      <article class="hl">
+        <div class="hl-text" data-reveal>
+          <p class="kicker"><span class="kicker-ico"><Icon name="search" size={16} /></span>{h.search.kicker}</p>
+          <h3>{h.search.title}</h3>
+          <p class="desc">{h.search.desc}</p>
+          <button type="button" data-open-palette class="btn btn-ghost btn-sm mt-7">
+            {h.search.try}
+            <span class="flex gap-1"><span class="kbd">Ctrl</span><span class="kbd">Alt</span><span class="kbd">Space</span></span>
+          </button>
+        </div>
+        <div class="hl-visual" data-reveal style="--d:2">
+          <div class="mock-panel w-full max-w-md" id="search-demo" data-demo={JSON.stringify(h.search.demo)}>
+            <div class="flex items-center gap-3 border-b border-white/[.07] px-4 py-3.5">
+              <Icon name="search" size={18} class="text-cyan" />
+              <span class="text-[15px] text-white"><span id="sd-q"></span><i class="caret"></i></span>
+              <span class="ml-auto hidden gap-1 sm:flex"><span class="kbd-d">Ctrl</span><span class="kbd-d">Alt</span><span class="kbd-d">Space</span></span>
+            </div>
+            <ul class="min-h-[168px] space-y-1 p-2" id="sd-res"></ul>
+          </div>
+          <template id="sd-row">
+            <li class="sd-row">
+              <span class="sd-ico"></span>
+              <span class="sd-title truncate"></span>
+              <span class="sd-kind"></span>
+            </li>
+          </template>
+          <div hidden id="sd-icons">
+            {Object.entries(resIcon).map(([k, v]) => <span data-k={k}><Icon name={v} size={15} /></span>)}
+          </div>
+        </div>
+      </article>
+
+      <!-- B. Musik -->
+      <article class="hl hl-rev">
+        <div class="hl-text" data-reveal>
+          <p class="kicker"><span class="kicker-ico"><Icon name="music" size={16} /></span>{h.music.kicker}</p>
+          <h3>{h.music.title}</h3>
+          <p class="desc">{h.music.desc}</p>
+        </div>
+        <div class="hl-visual" data-reveal style="--d:2">
+          <div class="relative w-full max-w-md" id="music-demo">
+            <div class="mx-auto mb-5 flex h-10 w-[88%] items-center gap-2.5 rounded-full border border-white/[.08] bg-[#060a12] px-4 text-[13px] text-[#d6e3ef] shadow-[0_18px_40px_-16px_rgb(0_0_0/0.8)]">
+              <span class="robot-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+              <Icon name="music" size={13} class="shrink-0 text-cyan" />
+              <span class="truncate text-white" id="md-cap">{h.music.lyrics[0]}</span>
+            </div>
+            <div class="mock-panel p-5">
+              <div class="flex items-center gap-3.5">
+                <div class="grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-cyan to-orange text-[#03121a]">
+                  <span class="eq"><i></i><i></i><i></i><i></i></span>
+                </div>
+                <div class="min-w-0">
+                  <p class="truncate font-bold text-white">{t.mock.music.song}</p>
+                  <p class="text-xs text-[#8da0b5]">{t.mock.music.artist} · {t.mock.music.source}</p>
+                </div>
+                <button class="ml-auto grid size-10 place-items-center rounded-full bg-white text-[#05070d] transition-transform active:scale-90" id="md-play" aria-label="Play/Pause">
+                  <span class="pp-pause"><Icon name="pause" size={14} /></span>
+                  <span class="pp-play"><Icon name="play" size={14} /></span>
+                </button>
+              </div>
+              <div class="mt-4 flex items-center gap-2.5 font-mono text-[10.5px] text-[#8da0b5]">
+                <span id="md-cur">0:00</span>
+                <div class="h-1 flex-1 overflow-hidden rounded-full bg-white/10"><i class="block h-full w-0 rounded-full bg-gradient-to-r from-cyan to-orange" id="md-bar"></i></div>
+                <span>0:{String(h.music.lyrics.length * 3).padStart(2, '0')}</span>
+              </div>
+              <div class="lyr-view mt-4">
+                <ul id="md-lines">
+                  {h.music.lyrics.map((l) => <li>{l}</li>)}
+                </ul>
+              </div>
+            </div>
+            <p class="mt-3 text-center text-[11px] text-muted">{h.music.note}</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- C. Sholat -->
+      <article class="hl">
+        <div class="hl-text" data-reveal>
+          <p class="kicker"><span class="kicker-ico"><Icon name="moon" size={16} /></span>{h.prayer.kicker}</p>
+          <h3>{h.prayer.title}</h3>
+          <p class="desc">{h.prayer.desc}</p>
+        </div>
+        <div class="hl-visual" data-reveal style="--d:2">
+          <div class="w-full max-w-md" id="prayer-demo">
+            <div class="mock-panel overflow-hidden">
+              <div class="relative flex items-center gap-4 p-5">
+                <div class="ring-wrap">
+                  <svg viewBox="0 0 100 100" class="size-full -rotate-90">
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(42,212,255,.12)" stroke-width="7"></circle>
+                    <circle id="pd-arc" cx="50" cy="50" r="44" fill="none" stroke="url(#pd-g)" stroke-width="7" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="80"></circle>
+                    <defs><linearGradient id="pd-g"><stop offset="0" stop-color="#2ad4ff"></stop><stop offset="1" stop-color="#ff9a1f"></stop></linearGradient></defs>
+                  </svg>
+                  <span class="absolute inset-0 grid place-items-center text-cyan"><Icon name="moon" size={22} /></span>
+                </div>
+                <div>
+                  <p class="text-xs text-[#8da0b5]">{t.mock.prayer.next}</p>
+                  <p class="text-xl font-bold text-white" id="pd-name">Maghrib</p>
+                  <p class="font-mono text-2xl font-semibold text-cyan tabular-nums" id="pd-cd">00:00:00</p>
+                </div>
+              </div>
+              <ul class="grid grid-cols-5 border-y border-white/[.07]" id="pd-list">
+                {
+                  t.mock.prayer.names.map((n, i) => (
+                    <li class="pd-cell">
+                      <span class="text-[10.5px]">{n}</span>
+                      <span class="font-mono text-[12.5px] font-semibold">{fmtTime(SAMPLE_TIMES[i], lang)}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+              <div class="space-y-2.5 p-5 text-[13px] text-[#d6e3ef]">
+                <div class="flex items-center gap-3">
+                  <Icon name="music" size={15} class="text-[#8da0b5]" />
+                  {h.prayer.pause}
+                  <button class="tgl ml-auto" role="switch" aria-checked="true" aria-label={h.prayer.pause}><i></i></button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <Icon name="bell" size={15} class="text-[#8da0b5]" />
+                  {h.prayer.sound}
+                  <span class="ml-auto rounded-lg border border-white/[.08] bg-white/[.04] px-2 py-1 font-mono text-[11px] text-[#c4d3e2]">{h.prayer.soundFile}</span>
+                </div>
+              </div>
+            </div>
+            <p class="mt-3 text-center text-[11px] text-muted">{h.prayer.note}</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- D. Asisten suara -->
+      <article class="hl hl-rev">
+        <div class="hl-text" data-reveal>
+          <p class="kicker"><span class="kicker-ico"><Icon name="mic" size={16} /></span>{h.voice.kicker}</p>
+          <h3>{h.voice.title}</h3>
+          <p class="desc">{h.voice.desc}</p>
+          <label class="mt-7 block max-w-xs">
+            <span class="text-xs font-semibold text-muted">{h.voice.rename}</span>
+            <span class="mt-2 flex items-center gap-2 rounded-2xl border border-line bg-surface px-3 py-2 focus-within:border-cyan/50">
+              <span class="text-sm font-semibold text-muted">{h.voice.hello}</span>
+              <input id="vd-name" value="Dzerly" maxlength="14" class="w-full bg-transparent text-sm font-bold outline-none" />
+            </span>
+          </label>
+        </div>
+        <div class="hl-visual" data-reveal style="--d:2">
+          <div class="mock-panel w-full max-w-md p-5" id="voice-demo" data-qa={JSON.stringify(h.voice.qa)} data-hello={h.voice.hello}>
+            <div class="flex items-center gap-3 border-b border-white/[.07] pb-4">
+              <span class="robot-eyes lg" id="vd-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+              <span class="ml-2 text-sm font-semibold text-white" id="vd-status">{h.voice.listening}</span>
+              <span class="wave ml-auto text-cyan" id="vd-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="mt-4 flex min-h-[188px] flex-col justify-end gap-2.5" id="vd-chat"></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hl {
+    display: grid;
+    align-items: center;
+    gap: 2.5rem;
+  }
+  @media (min-width: 1024px) {
+    .hl {
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+    }
+    .hl-rev .hl-text {
+      order: 2;
+    }
+  }
+  .hl-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+  .hl-visual::before {
+    content: '';
+    position: absolute;
+    inset: 10% 15%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(42 212 255 / 0.25), transparent 70%);
+    filter: blur(40px);
+    opacity: var(--glow);
+  }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--cyan-ink);
+  }
+  .kicker-ico {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 11px;
+    background: rgb(42 212 255 / 0.12);
+  }
+  .hl h3 {
+    margin-top: 1.1rem;
+    font-size: clamp(1.75rem, 3.6vw, 2.6rem);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .hl .desc {
+    margin-top: 1rem;
+    max-width: 34rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* Panel bergaya aplikasi (selalu gelap seperti di desktop) */
+  .mock-panel {
+    border-radius: 23px;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    background: linear-gradient(180deg, #0b111d, #070b14);
+    color: #d6e3ef;
+    box-shadow:
+      0 40px 80px -30px rgb(0 0 0 / 0.65),
+      inset 0 1px 0 rgb(255 255 255 / 0.05);
+  }
+
+  .kbd-d {
+    padding: 1px 6px;
+    border-radius: 5px;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: #8da0b5;
+  }
+  .caret {
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: -0.15em;
+    background: #2ad4ff;
+    animation: caret 1s steps(1) infinite;
+  }
+  :global(.sd-row) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 13px;
+    font-size: 14px;
+    animation: row-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  :global(.sd-row:first-child) {
+    background: rgb(42 212 255 / 0.1);
+    color: #fff;
+  }
+  :global(.sd-ico) {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex: none;
+    border-radius: 9px;
+    color: #2ad4ff;
+    background: rgb(255 255 255 / 0.05);
+  }
+  :global(.sd-kind) {
+    margin-left: auto;
+    flex: none;
+    font-size: 11px;
+    color: #8da0b5;
+  }
+  @keyframes row-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+
+  /* Musik */
+  .eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 20px;
+  }
+  .eq i {
+    width: 4px;
+    border-radius: 2px;
+    background: #03121a;
+    animation: eq 0.9s ease-in-out infinite alternate;
+  }
+  .eq i:nth-child(2) { animation-delay: -0.3s; }
+  .eq i:nth-child(3) { animation-delay: -0.6s; }
+  .eq i:nth-child(4) { animation-delay: -0.15s; }
+  @keyframes eq {
+    from { height: 25%; }
+    to { height: 100%; }
+  }
+  #music-demo.paused .eq i { animation-play-state: paused; }
+  .pp-play { display: none; }
+  #music-demo.paused .pp-play { display: block; }
+  #music-demo.paused .pp-pause { display: none; }
+  .lyr-view {
+    height: 150px;
+    overflow: hidden;
+    mask-image: linear-gradient(transparent, #000 25%, #000 70%, transparent);
+  }
+  #md-lines {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #md-lines li {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+    font-weight: 700;
+    color: rgb(255 255 255 / 0.22);
+    transform-origin: left center;
+    transition: color 0.4s, transform 0.4s;
+  }
+  #md-lines li.on {
+    color: #fff;
+    transform: scale(1.04);
+  }
+  #md-lines li.done {
+    color: rgb(255 255 255 / 0.4);
+  }
+
+  /* Sholat */
+  .ring-wrap {
+    position: relative;
+    width: 84px;
+    height: 84px;
+    flex: none;
+  }
+  #pd-arc {
+    transition: stroke-dashoffset 1s linear;
+  }
+  .pd-cell {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: 12px 2px;
+    color: #8da0b5;
+    border-right: 1px solid rgb(255 255 255 / 0.05);
+    transition: all 0.3s;
+  }
+  .pd-cell:last-child {
+    border-right: 0;
+  }
+  .pd-cell.next {
+    color: #fff;
+    background: rgb(42 212 255 / 0.1);
+    box-shadow: inset 0 -2px 0 #2ad4ff;
+  }
+  .pd-cell.past {
+    opacity: 0.5;
+  }
+  .tgl {
+    position: relative;
+    width: 38px;
+    height: 22px;
+    flex: none;
+    border-radius: 99px;
+    background: rgb(255 255 255 / 0.15);
+    transition: background 0.25s;
+  }
+  .tgl i {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+  .tgl[aria-checked='true'] {
+    background: #2ad4ff;
+  }
+  .tgl[aria-checked='true'] i {
+    transform: translateX(16px);
+  }
+
+  /* Asisten */
+  :global(.bubble) {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 13.5px;
+    line-height: 1.45;
+    animation: bub 0.45s cubic-bezier(0.34, 1.3, 0.64, 1) both;
+  }
+  :global(.bubble.me) {
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+    background: rgb(255 255 255 / 0.08);
+    color: #e9eff7;
+  }
+  :global(.bubble.bot) {
+    align-self: flex-start;
+    border-bottom-left-radius: 6px;
+    color: #03121a;
+    font-weight: 600;
+    background: linear-gradient(110deg, #2ad4ff, #8be9ff);
+  }
+  :global(.bubble .gloss) {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+  :global(.bubble b) {
+    color: #2ad4ff;
+  }
+  :global(.bubble.out) {
+    animation: bub-out 0.3s ease forwards;
+  }
+  @keyframes bub {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.92);
+    }
+  }
+  @keyframes bub-out {
+    to {
+      opacity: 0;
+      transform: translateY(-8px);
+      height: 0;
+      padding-block: 0;
+      margin: 0;
+    }
+  }
+</style>
+
+<script>
+  import { nextPrayer, fmtCountdown } from '../scripts/prayer';
+
+  const onVisible = (el: Element, cb: (v: boolean) => void) =>
+    new IntersectionObserver(([e]) => cb(e.isIntersecting), { threshold: 0.2 }).observe(el);
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const lang = document.documentElement.lang;
+
+  // ---------- A. Demo pencarian (mengetik otomatis) ----------
+  {
+    const box = document.getElementById('search-demo')!;
+    const demo: { q: string; results: string[][] }[] = JSON.parse(box.dataset.demo!);
+    const qEl = document.getElementById('sd-q')!;
+    const list = document.getElementById('sd-res')!;
+    const tpl = document.getElementById('sd-row') as HTMLTemplateElement;
+    const icons = Object.fromEntries(
+      [...document.querySelectorAll<HTMLElement>('#sd-icons [data-k]')].map((s) => [s.dataset.k!, s.innerHTML]),
+    );
+    let visible = false;
+    let running = false;
+    const render = (rows: string[][]) => {
+      list.innerHTML = '';
+      rows.forEach(([k, title, kind], i) => {
+        const li = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+        li.querySelector('.sd-ico')!.innerHTML = icons[k] ?? '';
+        li.querySelector('.sd-title')!.textContent = title;
+        li.querySelector('.sd-kind')!.textContent = kind;
+        li.style.animationDelay = `${i * 60}ms`;
+        list.appendChild(li);
+      });
+    };
+    const loop = async () => {
+      if (running) return;
+      running = true;
+      let n = 0;
+      while (visible) {
+        const { q, results } = demo[n % demo.length];
+        for (let i = 1; i <= q.length && visible; i++) {
+          qEl.textContent = q.slice(0, i);
+          await sleep(70 + Math.random() * 60);
+        }
+        render(results);
+        await sleep(2200);
+        for (let i = q.length; i >= 0 && visible; i--) {
+          qEl.textContent = q.slice(0, i);
+          await sleep(25);
+        }
+        list.innerHTML = '';
+        n++;
+      }
+      running = false;
+    };
+    onVisible(box, (v) => {
+      visible = v;
+      if (v) loop();
+    });
+  }
+
+  // ---------- B. Lirik tersinkron ----------
+  {
+    const root = document.getElementById('music-demo')!;
+    const lines = [...root.querySelectorAll<HTMLElement>('#md-lines li')];
+    const ul = document.getElementById('md-lines')!;
+    const cap = document.getElementById('md-cap')!;
+    const bar = document.getElementById('md-bar')!;
+    const cur = document.getElementById('md-cur')!;
+    const play = document.getElementById('md-play')!;
+    const total = lines.length * 3;
+    let t = 0;
+    let paused = false;
+    let visible = false;
+    const render = () => {
+      const idx = Math.min(lines.length - 1, Math.floor(t / 3));
+      lines.forEach((l, i) => {
+        l.classList.toggle('on', i === idx);
+        l.classList.toggle('done', i < idx);
+      });
+      ul.style.transform = `translateY(${57 - idx * 36}px)`;
+      if (cap.textContent !== lines[idx].textContent) {
+        cap.textContent = lines[idx].textContent;
+        cap.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 400, easing: 'ease-out' });
+      }
+      bar.style.width = `${(t / total) * 100}%`;
+      cur.textContent = `0:${String(Math.floor(t)).padStart(2, '0')}`;
+    };
+    render();
+    setInterval(() => {
+      if (paused || !visible) return;
+      t = (t + 0.25) % total;
+      render();
+    }, 250);
+    play.addEventListener('click', () => {
+      paused = !paused;
+      root.classList.toggle('paused', paused);
+    });
+    lines.forEach((l, i) =>
+      l.addEventListener('click', () => {
+        t = i * 3;
+        render();
+      }),
+    );
+    onVisible(root, (v) => (visible = v));
+  }
+
+  // ---------- C. Hitung mundur sholat ----------
+  {
+    const cells = [...document.querySelectorAll<HTMLElement>('#pd-list .pd-cell')];
+    const name = document.getElementById('pd-name')!;
+    const cd = document.getElementById('pd-cd')!;
+    const arc = document.getElementById('pd-arc')!;
+    const tick = () => {
+      const { index, seconds } = nextPrayer();
+      cells.forEach((c, i) => {
+        c.classList.toggle('next', i === index);
+        c.classList.toggle('past', i < index);
+      });
+      name.textContent = cells[index].firstElementChild!.textContent;
+      cd.textContent = fmtCountdown(seconds);
+      // Lingkaran penuh = 12 jam tersisa
+      const frac = Math.min(1, seconds / (12 * 3600));
+      arc.setAttribute('stroke-dashoffset', String(276.5 * frac));
+    };
+    tick();
+    setInterval(tick, 1000);
+    document.querySelectorAll<HTMLButtonElement>('#prayer-demo .tgl').forEach((b) =>
+      b.addEventListener('click', () => b.setAttribute('aria-checked', String(b.getAttribute('aria-checked') !== 'true'))),
+    );
+  }
+
+  // ---------- D. Asisten suara ----------
+  {
+    const box = document.getElementById('voice-demo')!;
+    const qa: string[][] = JSON.parse(box.dataset.qa!);
+    const hello = box.dataset.hello!;
+    const chat = document.getElementById('vd-chat')!;
+    const eyes = document.getElementById('vd-eyes')!;
+    const wave = document.getElementById('vd-wave')!;
+    const status = document.getElementById('vd-status')!;
+    const listening = status.textContent!;
+    const input = document.getElementById('vd-name') as HTMLInputElement;
+    let name = 'Dzerly';
+    let visible = false;
+    let running = false;
+
+    input.addEventListener('input', () => {
+      name = input.value.trim() || 'Dzerly';
+      chat.querySelectorAll<HTMLElement>('[data-name]').forEach((n) => (n.textContent = name));
+    });
+
+    const now = () => {
+      const d = new Date();
+      const p = (n: number) => String(n).padStart(2, '0');
+      return `${p(d.getHours())}${lang === 'id' ? '.' : ':'}${p(d.getMinutes())}`;
+    };
+    const add = (cls: string, html: string) => {
+      const b = document.createElement('div');
+      b.className = `bubble ${cls}`;
+      b.innerHTML = html;
+      chat.appendChild(b);
+      const all = chat.querySelectorAll('.bubble:not(.out)');
+      if (all.length > 4) {
+        const old = all[0] as HTMLElement;
+        old.classList.add('out');
+        setTimeout(() => old.remove(), 300);
+      }
+      return b;
+    };
+    const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+    const loop = async () => {
+      if (running) return;
+      running = true;
+      let i = 0;
+      while (visible) {
+        const [q, a, gloss] = qa[i % qa.length];
+        eyes.className = 'robot-eyes lg listening';
+        wave.classList.remove('idle');
+        status.textContent = listening;
+        await sleep(900);
+        add('me', `${esc(hello)} <b data-name>${esc(name)}</b>, ${esc(q)}`);
+        await sleep(900);
+        wave.classList.add('idle');
+        eyes.className = 'robot-eyes lg talking';
+        status.textContent = name;
+        add('bot', `${esc(a.replace('{time}', now()))}${gloss ? `<span class="gloss">${esc(gloss.replace('{time}', now()))}</span>` : ''}`);
+        await sleep(1700);
+        eyes.className = 'robot-eyes lg';
+        await sleep(900);
+        i++;
+      }
+      eyes.className = 'robot-eyes lg';
+      running = false;
+    };
+    eyes.dataset.track = '';
+    onVisible(box, (v) => {
+      visible = v;
+      if (v) loop();
+    });
+  }
+</script>
