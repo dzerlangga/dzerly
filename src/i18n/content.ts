@@ -345,7 +345,7 @@ const id = {
     reqs: [
       ['Sistem operasi', 'Windows 10 atau 11, 64-bit'],
       ['Komponen', 'Microsoft Edge WebView2 Runtime (bawaan Windows 11)'],
-      ['Ukuran unduhan', '±3 MB (installer .exe) atau ±5 MB (.msi)'],
+      ['Ukuran unduhan', '±3 MB (installer .exe) atau ±4 MB (.msi)'],
       ['Ekstensi (opsional)', 'Google Chrome atau Microsoft Edge'],
     ],
     exe: 'Unduh installer (.exe)',
@@ -809,7 +809,7 @@ const en: Content = {
     reqs: [
       ['Operating system', 'Windows 10 or 11, 64-bit'],
       ['Component', 'Microsoft Edge WebView2 Runtime (built into Windows 11)'],
-      ['Download size', '~3 MB (.exe installer) or ~5 MB (.msi)'],
+      ['Download size', '~3 MB (.exe installer) or ~4 MB (.msi)'],
       ['Extension (optional)', 'Google Chrome or Microsoft Edge'],
     ],
     exe: 'Download installer (.exe)',

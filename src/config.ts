@@ -12,7 +12,7 @@ const GITHUB_REPO = 'dzerlangga/dzerly';
  * - 'github' → dari GitHub Releases terbaru. Unduhan TERHITUNG di statistik.
  *   Syarat: buat Release (mis. tag v0.1.0) dan unggah file .exe & .msi dengan nama yang sama.
  */
-const DOWNLOAD_SOURCE: 'local' | 'github' = 'local';
+const DOWNLOAD_SOURCE: 'local' | 'github' = 'github';
 
 const EXE = 'Dzerly_0.1.0_x64-setup.exe';
 const MSI = 'Dzerly_0.1.0_x64_en-US.msi';

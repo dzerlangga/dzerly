@@ -168,15 +168,17 @@ const icons = ['sparkles', 'download', 'windows', 'globe'];
         );
         document.getElementById('stats-date')!.classList.remove('hidden');
       }
-      if (d.total <= 0) return;
+      // Belum ada rilis sama sekali → tetap tampilkan ajakan "jadilah yang pertama"
+      if (!d.date) return;
       root.querySelector<HTMLElement>('[data-state="first"]')!.hidden = true;
       root.querySelector<HTMLElement>('[data-state="count"]')!.hidden = false;
       countUp(document.getElementById('stats-total')!, d.total);
       countUp(document.getElementById('stats-exe')!, d.exe);
       countUp(document.getElementById('stats-msi')!, d.msi);
       requestAnimationFrame(() => {
-        document.getElementById('stats-bar-exe')!.style.width = `${(d.exe / d.total) * 100}%`;
-        document.getElementById('stats-bar-msi')!.style.width = `${(d.msi / d.total) * 100}%`;
+        const sum = d.total || 1;
+        document.getElementById('stats-bar-exe')!.style.width = `${(d.exe / sum) * 100}%`;
+        document.getElementById('stats-bar-msi')!.style.width = `${(d.msi / sum) * 100}%`;
       });
     },
     { threshold: 0.3 },
