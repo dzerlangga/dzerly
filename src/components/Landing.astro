@@ -9,6 +9,8 @@ import MediaBridge from './MediaBridge.astro';
 import Personalize from './Personalize.astro';
 import Privacy from './Privacy.astro';
 import Download from './Download.astro';
+import DownloadStats from './DownloadStats.astro';
+import Support from './Support.astro';
 import Faq from './Faq.astro';
 import Cta from './Cta.astro';
 import Footer from './Footer.astro';
@@ -32,8 +34,10 @@ const t = content[lang];
     <MediaBridge t={t} />
     <Personalize t={t} lang={lang} />
     <Privacy t={t} />
+    <DownloadStats t={t} />
     <Download t={t} />
     <Faq t={t} />
+    <Support t={t} />
     <Cta t={t} />
   </main>
   <Footer t={t} lang={lang} />

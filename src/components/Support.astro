@@ -1,0 +1,495 @@
+---
+import Icon from './Icon.astro';
+import { SITE } from '../config';
+import type { Content } from '../i18n/content';
+
+interface Props {
+  t: Content;
+}
+const { t } = Astro.props;
+const s = t.support;
+const sp = SITE.support;
+const hasPay = Boolean(sp.saweria || sp.trakteer || sp.qrisImage);
+const rp = (n: number) => `Rp${n.toLocaleString('id-ID')}`;
+---
+
+<section id="traktir" class="relative overflow-hidden py-24 sm:py-32">
+  <div class="orb top-1/4 -right-40 h-[26rem] w-[26rem] bg-[#ff9a1f] opacity-[calc(var(--glow)*0.5)]" aria-hidden="true"></div>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="mx-auto max-w-2xl text-center" data-reveal>
+      <p class="eyebrow">{s.eyebrow}</p>
+      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{s.title}</h2>
+      <p class="mt-4 text-pretty text-muted">{s.subtitle}</p>
+    </div>
+
+    <div class="mt-14 grid items-start gap-6 lg:grid-cols-[1.25fr_1fr] lg:gap-10" id="treat">
+      <!-- Menu -->
+      <div data-reveal>
+        <p class="mb-4 flex items-center gap-2 text-sm font-bold text-muted">
+          <span class="text-lg">🏪</span>{s.menuTitle}
+        </p>
+        <ul class="grid gap-3">
+          {
+            s.menu.map((m, i) => (
+              <li class="menu-item spot glass" data-i={i} data-price={m.price} data-name={m.name} data-emoji={m.emoji}>
+                <button class="menu-main" data-add aria-label={`+ ${m.name}`}>
+                  <span class="menu-emoji">{m.emoji}</span>
+                  <span class="min-w-0 flex-1 text-left">
+                    <span class="block font-bold">{m.name}</span>
+                    <span class="block text-sm text-muted">{m.note}</span>
+                  </span>
+                  <span class="font-mono text-sm font-bold text-cyan-ink">{rp(m.price)}</span>
+                </button>
+                <div class="qty">
+                  <button data-sub aria-label={`− ${m.name}`}>−</button>
+                  <span data-qty>0</span>
+                  <button data-add aria-label={`+ ${m.name}`}>+</button>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Struk -->
+      <div class="lg:sticky lg:top-24" data-reveal style="--d:2">
+        <div class="receipt" id="receipt">
+          <div class="flex flex-col items-center text-center">
+            <div class="cashier">
+              <span class="robot-eyes lg" id="treat-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+            </div>
+            <p class="bubble-say" id="treat-say" data-moods={JSON.stringify(s.moods)}>{s.moods[0]}</p>
+            <p class="mt-4 font-mono text-sm font-bold tracking-[0.2em]">{s.receipt}</p>
+            <p class="font-mono text-[11px] opacity-60">{s.cashier} · <span data-date></span> · <span data-clock></span></p>
+          </div>
+
+          <div class="dash"></div>
+          <ul class="min-h-[96px] space-y-2 font-mono text-[13px]" id="receipt-lines">
+            <li class="py-6 text-center text-[12px] opacity-60" id="receipt-empty">{s.empty}</li>
+          </ul>
+          <div class="dash"></div>
+
+          <div class="flex items-end justify-between font-mono">
+            <span class="text-sm font-bold">{s.total}</span>
+            <span class="text-3xl font-extrabold tabular-nums" id="receipt-total">Rp0</span>
+          </div>
+
+          <span hidden data-copied>{s.copied}</span>
+          <div class="mt-5 grid gap-2" id="pay">
+            {
+              hasPay ? (
+                <>
+                  <button class="pay pay-copy" id="copy-total" type="button" disabled>
+                    <Icon name="clipboard" size={15} />
+                    <span data-label>{s.copy}</span>
+                  </button>
+                  <p class="text-center text-[11px] opacity-60">{s.payHint}</p>
+                  {sp.saweria && (
+                    <a class="pay pay-a" href={sp.saweria} target="_blank" rel="noopener" data-pay>
+                      ☕ {s.saweria}
+                    </a>
+                  )}
+                  {sp.trakteer && (
+                    <a class="pay pay-b" href={sp.trakteer} target="_blank" rel="noopener" data-pay>
+                      🍜 {s.trakteer}
+                    </a>
+                  )}
+                  {sp.qrisImage && (
+                    <button class="pay pay-c" type="button" id="open-qris" data-pay>
+                      <Icon name="app" size={15} /> {s.qris}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p class="rounded-xl border border-dashed border-current/25 py-3 text-center text-sm opacity-70">{s.soon}</p>
+              )
+            }
+          </div>
+          <p class="mt-5 text-center font-mono text-[11px] opacity-60">*** {s.thanks} ***</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {
+    sp.qrisImage && (
+      <dialog id="qris-dialog" class="qris-dialog">
+        <div class="receipt !pb-6 text-center">
+          <p class="font-mono text-sm font-bold tracking-[0.2em]">{s.qrisTitle}</p>
+          <img src={sp.qrisImage} alt="QRIS" width="260" height="260" class="mx-auto mt-4 aspect-square w-64 rounded-xl bg-white object-contain p-2" loading="lazy" />
+          <p class="mt-3 font-mono text-2xl font-extrabold" id="qris-total">Rp0</p>
+          <p class="mt-1 text-xs opacity-70">{s.qrisHint}</p>
+          <button class="pay pay-copy mt-4 w-full" type="button" id="close-qris">{s.close}</button>
+        </div>
+      </dialog>
+    )
+  }
+</section>
+
+<style>
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem 0.6rem 0.6rem;
+    border-radius: 22px;
+    transition: border-color 0.3s, transform 0.3s var(--ease-spring);
+  }
+  .menu-item.has {
+    border-color: rgb(42 212 255 / 0.45);
+  }
+  .menu-main {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.35rem;
+    border-radius: 16px;
+  }
+  .menu-emoji {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    flex: none;
+    border-radius: 16px;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, rgb(42 212 255 / 0.12), rgb(255 154 31 / 0.12));
+    border: 1px solid var(--line);
+    transition: transform 0.4s var(--ease-spring);
+  }
+  .menu-item:hover .menu-emoji {
+    transform: rotate(-10deg) scale(1.08);
+  }
+  .menu-item.bump .menu-emoji {
+    animation: bump 0.45s var(--ease-spring);
+  }
+  @keyframes bump {
+    40% {
+      transform: scale(1.25) rotate(8deg);
+    }
+  }
+  .qty {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  .qty button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+  }
+  .qty button:hover {
+    color: #03121a;
+    background: #2ad4ff;
+  }
+  .qty button:active {
+    transform: scale(0.88);
+  }
+  .qty span {
+    min-width: 1.4rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  @media (max-width: 480px) {
+    .menu-item {
+      flex-wrap: wrap;
+    }
+    .qty {
+      margin-left: auto;
+    }
+  }
+
+  /* ---------- Struk ---------- */
+  .receipt {
+    --paper: #fbfaf6;
+    position: relative;
+    padding: 1.6rem 1.5rem 2.4rem;
+    color: #1b1f24;
+    background: var(--paper);
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.55);
+    /* tepi bawah bergerigi seperti kertas struk */
+    -webkit-mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat,
+      radial-gradient(circle 7px at 50% 100%, transparent 98%, #000) bottom / 18px 10px repeat-x;
+    mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat,
+      radial-gradient(circle 7px at 50% 100%, transparent 98%, #000) bottom / 18px 10px repeat-x;
+  }
+  .receipt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.015) 0 2px, transparent 2px 4px);
+    pointer-events: none;
+  }
+  .cashier {
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 46px;
+    border-radius: 999px;
+    background: #060a12;
+    box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.6);
+  }
+  .bubble-say {
+    position: relative;
+    margin-top: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #e8f8ff;
+    color: #075985;
+  }
+  .bubble-say::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    translate: -50% 0;
+    rotate: 45deg;
+    background: inherit;
+  }
+  .bubble-say.pop {
+    animation: pop 0.45s var(--ease-spring);
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.7);
+      opacity: 0;
+    }
+  }
+  .dash {
+    margin: 1.1rem 0;
+    border-top: 2px dashed rgb(27 31 36 / 0.2);
+  }
+  :global(.r-line) {
+    display: flex;
+    gap: 0.5rem;
+    animation: line-in 0.35s var(--ease-out-expo) both;
+  }
+  :global(.r-line .dots) {
+    flex: 1;
+    border-bottom: 1px dotted rgb(27 31 36 / 0.3);
+    translate: 0 -4px;
+  }
+  @keyframes line-in {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+  }
+  #receipt-total.tick {
+    animation: tick 0.35s ease;
+  }
+  @keyframes tick {
+    50% {
+      color: #0284c7;
+      transform: scale(1.06);
+    }
+  }
+
+  .pay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.9rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    transition: transform 0.25s var(--ease-spring), filter 0.2s, opacity 0.2s;
+  }
+  .pay:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+  }
+  .pay:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+  .pay-copy {
+    border: 1.5px dashed rgb(27 31 36 / 0.3);
+    color: #1b1f24;
+  }
+  .pay-a {
+    color: #fff;
+    background: linear-gradient(100deg, #ff9a1f, #ff7a1f);
+    box-shadow: 0 10px 24px -12px #ff7a1f;
+  }
+  .pay-b {
+    color: #fff;
+    background: linear-gradient(100deg, #e5484d, #d6336c);
+    box-shadow: 0 10px 24px -12px #d6336c;
+  }
+  .pay-c {
+    color: #fff;
+    background: #0b1220;
+  }
+
+  .qris-dialog {
+    width: min(360px, calc(100vw - 32px));
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .qris-dialog::backdrop {
+    background: rgb(2 4 10 / 0.6);
+    backdrop-filter: blur(6px);
+  }
+  .qris-dialog[open] .receipt {
+    animation: pop 0.45s var(--ease-spring);
+  }
+
+  :global(.fly) {
+    position: fixed;
+    z-index: 60;
+    font-size: 1.8rem;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const root = document.getElementById('treat')!;
+  const items = [...root.querySelectorAll<HTMLElement>('.menu-item')];
+  const lines = document.getElementById('receipt-lines')!;
+  const empty = document.getElementById('receipt-empty')!;
+  const totalEl = document.getElementById('receipt-total')!;
+  const say = document.getElementById('treat-say')!;
+  const eyes = document.getElementById('treat-eyes')!;
+  const receipt = document.getElementById('receipt')!;
+  const moods: string[] = JSON.parse(say.dataset.moods!);
+  const copyBtn = document.getElementById('copy-total') as HTMLButtonElement | null;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const qty = items.map(() => 0);
+  let total = 0;
+  let moodIdx = 0;
+  let talkTimer = 0;
+
+  const rp = (n: number) => `Rp${n.toLocaleString('id-ID')}`;
+
+  const fly = (from: HTMLElement, emoji: string) => {
+    if (reduce) return;
+    const a = from.getBoundingClientRect();
+    const b = totalEl.getBoundingClientRect();
+    const el = document.createElement('span');
+    el.className = 'fly';
+    el.textContent = emoji;
+    el.style.left = `${a.left + a.width / 2 - 16}px`;
+    el.style.top = `${a.top + a.height / 2 - 16}px`;
+    document.body.appendChild(el);
+    const dx = b.left + b.width / 2 - (a.left + a.width / 2);
+    const dy = b.top - (a.top + a.height / 2);
+    el.animate(
+      [
+        { transform: 'translate(0,0) scale(1)', opacity: 1 },
+        { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 80}px) scale(1.3)`, opacity: 1, offset: 0.5 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.4)`, opacity: 0 },
+      ],
+      { duration: 750, easing: 'cubic-bezier(.5,0,.5,1)' },
+    ).finished.then(() => el.remove());
+  };
+
+  const render = (changed?: number) => {
+    total = items.reduce((sum, it, i) => sum + qty[i] * Number(it.dataset.price), 0);
+    lines.querySelectorAll('.r-line').forEach((l) => l.remove());
+    empty.hidden = total > 0;
+    items.forEach((it, i) => {
+      it.querySelector('[data-qty]')!.textContent = String(qty[i]);
+      it.classList.toggle('has', qty[i] > 0);
+      if (!qty[i]) return;
+      const li = document.createElement('li');
+      li.className = 'r-line';
+      if (i !== changed) li.style.animation = 'none';
+      li.innerHTML = `<span>${it.dataset.emoji} ${qty[i]}× ${it.dataset.name}</span><span class="dots"></span><span>${rp(qty[i] * Number(it.dataset.price))}</span>`;
+      lines.appendChild(li);
+    });
+    totalEl.textContent = rp(total);
+    totalEl.classList.remove('tick');
+    void totalEl.offsetWidth;
+    totalEl.classList.add('tick');
+    if (copyBtn) copyBtn.disabled = total === 0;
+    const q = document.getElementById('qris-total');
+    if (q) q.textContent = rp(total);
+
+    const m = total === 0 ? 0 : total < 20000 ? 1 : total < 75000 ? 2 : 3;
+    if (m !== moodIdx) {
+      moodIdx = m;
+      say.textContent = moods[m];
+      say.classList.remove('pop');
+      void say.offsetWidth;
+      say.classList.add('pop');
+    }
+  };
+
+  items.forEach((it, i) => {
+    it.querySelectorAll<HTMLButtonElement>('[data-add]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (qty[i] >= 99) return;
+        qty[i]++;
+        fly(it.querySelector('.menu-emoji')!, it.dataset.emoji!);
+        it.classList.remove('bump');
+        void it.offsetWidth;
+        it.classList.add('bump');
+        eyes.classList.add('talking');
+        clearTimeout(talkTimer);
+        talkTimer = window.setTimeout(() => eyes.classList.remove('talking'), 900);
+        render(i);
+      }),
+    );
+    it.querySelector<HTMLButtonElement>('[data-sub]')!.addEventListener('click', () => {
+      if (!qty[i]) return;
+      qty[i]--;
+      render();
+    });
+  });
+
+  copyBtn?.addEventListener('click', async () => {
+    const label = copyBtn.querySelector<HTMLElement>('[data-label]')!;
+    const orig = label.textContent;
+    try {
+      await navigator.clipboard.writeText(String(total));
+      label.textContent = (copyBtn.closest('section')!.querySelector('[data-copied]') as HTMLElement | null)?.textContent ?? '✓';
+    } catch {
+      label.textContent = rp(total);
+    }
+    setTimeout(() => (label.textContent = orig), 1400);
+  });
+
+  // QRIS
+  const dlg = document.getElementById('qris-dialog') as HTMLDialogElement | null;
+  document.getElementById('open-qris')?.addEventListener('click', () => dlg?.showModal());
+  document.getElementById('close-qris')?.addEventListener('click', () => dlg?.close());
+  dlg?.addEventListener('click', (e) => e.target === dlg && dlg.close());
+
+  // Struk sedikit miring mengikuti kursor
+  if (!reduce) {
+    receipt.addEventListener('pointermove', (e) => {
+      const r = receipt.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      receipt.style.transform = `perspective(900px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+    });
+    receipt.addEventListener('pointerleave', () => (receipt.style.transform = ''));
+    receipt.style.transition = 'transform .4s cubic-bezier(.16,1,.3,1)';
+  }
+</script>

@@ -22,7 +22,7 @@ const home = lang === 'id' ? '/' : '/en/';
       <span class="text-[1.05rem]">Dzerly</span>
     </a>
 
-    <ul class="mx-auto hidden items-center gap-1 md:flex">
+    <ul class="mx-auto hidden items-center gap-0.5 lg:flex">
       {
         t.nav.links.map((l) => (
           <li>
@@ -38,11 +38,11 @@ const home = lang === 'id' ? '/' : '/en/';
       }
     </ul>
 
-    <div class="ml-auto flex items-center gap-1 md:ml-0">
+    <div class="ml-auto flex items-center gap-1 lg:ml-0">
       <button
         type="button"
         data-open-palette
-        class="hidden h-9 items-center gap-2 rounded-full border border-line px-3 text-sm text-muted transition-colors hover:text-ink lg:flex"
+        class="hidden h-9 items-center gap-2 rounded-full border border-line px-3 text-sm text-muted transition-colors hover:text-ink xl:flex"
         aria-label={t.nav.search}
       >
         <Icon name="search" size={15} />
@@ -51,7 +51,7 @@ const home = lang === 'id' ? '/' : '/en/';
       <button
         type="button"
         data-open-palette
-        class="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink lg:hidden"
+        class="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-ink xl:hidden"
         aria-label={t.nav.search}
       >
         <Icon name="search" size={18} />
@@ -80,7 +80,7 @@ const home = lang === 'id' ? '/' : '/en/';
       <button
         type="button"
         id="menu-btn"
-        class="grid size-9 place-items-center rounded-full text-ink hover:bg-surface-2 md:hidden"
+        class="grid size-9 place-items-center rounded-full text-ink hover:bg-surface-2 lg:hidden"
         aria-expanded="false"
         aria-controls="mobile-menu"
         aria-label={t.nav.menu}
@@ -93,7 +93,7 @@ const home = lang === 'id' ? '/' : '/en/';
   <!-- Menu ponsel: "mengembang" dari navbar seperti kapsul -->
   <div
     id="mobile-menu"
-    class="glass mx-auto mt-2 grid max-w-6xl origin-top overflow-hidden rounded-[23px] transition-all duration-500 ease-[var(--ease-out-expo)] md:hidden"
+    class="glass mx-auto mt-2 grid max-w-6xl origin-top overflow-hidden rounded-[23px] transition-all duration-500 ease-[var(--ease-out-expo)] lg:hidden"
     data-open="false"
   >
     <div class="min-h-0">
@@ -124,7 +124,7 @@ const home = lang === 'id' ? '/' : '/en/';
 
 <style>
   #nav.scrolled .nav-shell {
-    max-width: 56rem;
+    max-width: 62rem;
     background: color-mix(in srgb, var(--bg) 72%, transparent);
   }
   [data-navlink][data-active]::after {
