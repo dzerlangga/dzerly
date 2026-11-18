@@ -44,7 +44,7 @@ export const SITE = {
   /** Bagian "Traktir". Tombol yang tautannya kosong disembunyikan. */
   support: {
     /** [ISI] mis. 'https://saweria.co/username' */
-    saweria: '',
+    saweria: 'https://saweria.co/ThanD',
     /** [ISI] mis. 'https://trakteer.id/username' */
     trakteer: '',
     /** [ISI] Gambar QRIS di folder public/, mis. '/qris.png' */
