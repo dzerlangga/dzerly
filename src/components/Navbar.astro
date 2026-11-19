@@ -14,7 +14,7 @@ const home = lang === 'id' ? '/' : '/en/';
 
 <header id="nav" class="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4">
   <nav
-    class="nav-shell glass mx-auto flex h-14 max-w-6xl items-center gap-2 rounded-full pr-2 pl-4 shadow-[0_8px_40px_-12px_rgb(0_0_0/0.5)] transition-all duration-500"
+    class="nav-shell glass glass-blur mx-auto flex h-14 max-w-6xl items-center gap-2 rounded-full pr-2 pl-4 shadow-[0_8px_40px_-12px_rgb(0_0_0/0.5)] transition-all duration-500"
     aria-label="Utama"
   >
     <a href={home + '#top'} class="flex items-center gap-2.5 font-extrabold tracking-tight" aria-label="Dzerly">
@@ -93,7 +93,7 @@ const home = lang === 'id' ? '/' : '/en/';
   <!-- Menu ponsel: "mengembang" dari navbar seperti kapsul -->
   <div
     id="mobile-menu"
-    class="glass mx-auto mt-2 grid max-w-6xl origin-top overflow-hidden rounded-[23px] transition-all duration-500 ease-[var(--ease-out-expo)] lg:hidden"
+    class="glass glass-blur mx-auto mt-2 max-w-6xl overflow-hidden rounded-[23px] lg:hidden"
     data-open="false"
   >
     <div class="min-h-0">
@@ -138,18 +138,27 @@ const home = lang === 'id' ? '/' : '/en/';
     translate: -50% 0;
     background: linear-gradient(90deg, #2ad4ff, #ff9a1f);
   }
+  /* Menu mengembang lewat clip-path + opacity (tanpa animasi layout) */
   #mobile-menu {
-    grid-template-rows: 0fr;
+    visibility: hidden;
     opacity: 0;
-    transform: scale(0.96) translateY(-6px);
+    clip-path: inset(0 0 100% 0 round 23px);
     pointer-events: none;
     background: color-mix(in srgb, var(--bg) 94%, transparent);
+    transition:
+      clip-path 0.45s var(--ease-out-expo),
+      opacity 0.25s ease,
+      visibility 0s linear 0.45s;
   }
   #mobile-menu[data-open='true'] {
-    grid-template-rows: 1fr;
+    visibility: visible;
     opacity: 1;
-    transform: none;
+    clip-path: inset(0 0 0 0 round 23px);
     pointer-events: auto;
+    transition:
+      clip-path 0.5s var(--ease-out-expo),
+      opacity 0.2s ease,
+      visibility 0s;
   }
   .theme-icon-light {
     display: none;

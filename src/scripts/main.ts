@@ -16,6 +16,15 @@ const revealIO = new IntersectionObserver(
 );
 document.querySelectorAll('[data-reveal]').forEach((el) => revealIO.observe(el));
 
+// Hentikan animasi CSS di bagian yang tidak terlihat (hemat CPU/GPU)
+const offIO = new IntersectionObserver(
+  (entries) => {
+    for (const e of entries) e.target.classList.toggle('offscreen', !e.isIntersecting);
+  },
+  { rootMargin: '150px 0px' },
+);
+document.querySelectorAll('main > section, footer').forEach((el) => offIO.observe(el));
+
 // Sorot kursor pada kartu .spot
 document.addEventListener(
   'pointermove',

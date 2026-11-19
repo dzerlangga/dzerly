@@ -59,10 +59,9 @@ const cur = pvText[lang];
             style="--mint:#2ad4ff;--mint-strong:#ff9a1f;--radius:23px;--op:.6;--scale:1"
           >
             <div class="pv-cap">
-              <span class="robot-eyes" id="pv-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+              <span class="w-eyes flex"><span class="robot-eyes" id="pv-eyes" data-track><i class="eye"></i><i class="eye"></i></span></span>
               <span class="w-clock font-semibold tabular-nums" data-clock>09.41</span>
-              <span class="w-weather flex items-center gap-1"><Icon name="cloud-sun" size={14} />28°</span>
-              <span class="w-battery flex items-center gap-1"><Icon name="battery" size={15} />86%</span>
+              <span class="w-info flex items-center gap-1"><Icon name="moon" size={13} /><span data-pv="maghrib">{cur.maghrib}</span> 17.52</span>
             </div>
             <div class="pv-panel">
               <div class="flex items-center gap-2">
@@ -109,6 +108,14 @@ const cur = pvText[lang];
 
       <!-- Kontrol -->
       <div class="glass grid gap-6 rounded-[23px] p-5 sm:p-7" id="pv-controls">
+        <fieldset>
+          <legend class="ctl-label">{p.shape}</legend>
+          <div class="seg-row">
+            <button class="seg2" data-pv-shape="capsule" aria-pressed="true">{p.shapes.capsule}</button>
+            <button class="seg2" data-pv-shape="notch" aria-pressed="false">{p.shapes.notch}</button>
+          </div>
+        </fieldset>
+
         <fieldset>
           <legend class="ctl-label">{p.palette}</legend>
           <div class="flex flex-wrap gap-1.5">
@@ -427,11 +434,34 @@ const cur = pvText[lang];
     padding: 0 16px;
     border-radius: 999px;
     font-size: 13px;
-    background: #060a12;
+    --capbg: #060a12;
+    background: var(--capbg);
     color: #e2ecf6;
     border: 1px solid rgb(255 255 255 / 0.08);
     box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.8);
+    position: relative;
+    transition: margin 0.4s var(--ease-spring), border-radius 0.3s;
   }
+  /* Mode notch: menempel di tepi atas, sudut atas melengkung menyatu dengan layar */
+  .pv[data-shape='notch'] .pv-cap {
+    margin-top: -23px;
+    border-top-color: transparent;
+    border-radius: 0 0 20px 20px;
+  }
+  .pv-cap::before,
+  .pv-cap::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .pv-cap::before { left: -16px; background: radial-gradient(circle at 0 100%, transparent 15.5px, var(--capbg) 16px); }
+  .pv-cap::after { right: -16px; background: radial-gradient(circle at 100% 100%, transparent 15.5px, var(--capbg) 16px); }
+  .pv[data-shape='notch'] .pv-cap::before,
+  .pv[data-shape='notch'] .pv-cap::after { opacity: 1; }
   .pv-cap .robot-eyes .eye {
     --eye: var(--eye-c, var(--mint));
   }
@@ -446,8 +476,7 @@ const cur = pvText[lang];
     max-width: 0;
     margin-left: -12px;
   }
-  .pv-cap .w-weather :global(svg) { color: #ffd166; }
-  .pv-cap .w-battery :global(svg) { color: var(--mint); }
+  .pv-cap .w-info :global(svg) { color: var(--mint); }
 
   .pv-panel {
     width: 100%;
@@ -474,7 +503,7 @@ const cur = pvText[lang];
 
   /* Gaya panel */
   .pv[data-mode='light'] { --bgc: #f4f7fa; --txt: #13202f; --mut: #5d6b7c; --card: rgb(15 23 42 / 0.04); --ln: rgb(15 23 42 / 0.08); }
-  .pv[data-mode='light'] .pv-cap { background: #111b28; }
+  .pv[data-mode='light'] .pv-cap { --capbg: #111b28; }
   .pv[data-style='glass'] { --bgc: rgb(10 14 22 / var(--op)); }
   .pv[data-style='glass'][data-mode='light'] { --bgc: rgb(255 255 255 / var(--op)); }
   .pv[data-style='glass'] .pv-panel { backdrop-filter: blur(16px); }
@@ -482,7 +511,7 @@ const cur = pvText[lang];
   .pv[data-style='frost'][data-mode='light'] { --bgc: rgb(255 255 255 / calc(var(--op) * 0.9 + 0.1)); }
   .pv[data-style='frost'] .pv-panel { backdrop-filter: blur(34px) saturate(170%); }
   .pv[data-style='amoled'] { --bgc: #000; --ln: rgb(255 255 255 / 0.12); --card: #0b0b0b; --txt: #f2f2f2; --mut: #8a8a8a; }
-  .pv[data-style='amoled'] .pv-cap { background: #000; }
+  .pv[data-style='amoled'] .pv-cap { --capbg: #000; }
   .pv[data-style='aurora'] .pv-panel {
     background:
       radial-gradient(110% 80% at 0% 0%, color-mix(in srgb, var(--mint) 40%, transparent), transparent 60%),
@@ -528,6 +557,12 @@ const cur = pvText[lang];
     b.addEventListener('click', () => {
       press('data-style-btn', b);
       pv.dataset.style = b.dataset.styleBtn!;
+    }),
+  );
+  ctl.querySelectorAll<HTMLButtonElement>('[data-pv-shape]').forEach((b) =>
+    b.addEventListener('click', () => {
+      press('data-pv-shape', b);
+      pv.dataset.shape = b.dataset.pvShape!;
     }),
   );
   ctl.querySelectorAll<HTMLButtonElement>('[data-pv-theme]').forEach((b) =>

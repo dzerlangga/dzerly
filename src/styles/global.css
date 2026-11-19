@@ -103,8 +103,12 @@ body {
 .glass {
   background: var(--surface);
   border: 1px solid var(--line);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+/* Blur latar hanya untuk elemen yang melayang di atas konten (navbar).
+   Dipakai di banyak kartu, backdrop-filter membuat gulir berat. */
+.glass-blur {
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 
 .kbd {
@@ -203,7 +207,9 @@ body {
 .orb {
   position: absolute;
   border-radius: 999px;
-  filter: blur(80px);
+  /* Gradien lewat mask: tampak sama lembutnya dengan blur(80px) tanpa biaya filter */
+  -webkit-mask-image: radial-gradient(closest-side, #000 15%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 15%, transparent 100%);
   opacity: var(--glow);
   pointer-events: none;
 }
@@ -211,23 +217,25 @@ body {
 /* Reveal saat gulir */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(28px);
-  filter: blur(6px);
+  transform: translateY(24px);
   transition:
-    opacity 0.8s var(--ease-out-expo),
-    transform 0.8s var(--ease-out-expo),
-    filter 0.8s var(--ease-out-expo);
-  transition-delay: calc(var(--d, 0) * 80ms);
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+  transition-delay: calc(var(--d, 0) * 70ms);
 }
 [data-reveal].in {
   opacity: 1;
   transform: none;
-  filter: none;
 }
 .no-js [data-reveal] {
   opacity: 1;
   transform: none;
-  filter: none;
+}
+
+/* Animasi berhenti saat bagiannya di luar layar (diset oleh main.ts) */
+.offscreen,
+.offscreen * {
+  animation-play-state: paused !important;
 }
 
 /* Kartu dengan sorot kursor */
@@ -461,6 +469,5 @@ body {
   [data-reveal] {
     opacity: 1;
     transform: none;
-    filter: none;
   }
 }

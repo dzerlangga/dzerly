@@ -10,6 +10,11 @@ interface Props {
 const { t, lang } = Astro.props;
 const h = t.highlights;
 const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipboard', calc: 'calc', file: 'file', cal: 'calendar', cmd: 'terminal' };
+const mc = t.mock.control;
+// Ikon & status awal ubin Pusat Kontrol (urutan sama dengan mock.control.tiles)
+const ccIcons = ['wifi', 'bluetooth', 'contrast', 'volume-x', 'sunset', 'leaf', 'pipette', 'lock'];
+const ccOn = [true, true, true, false, false, false, false, false];
+const ccMomentary = [false, false, false, false, false, false, true, true];
 ---
 
 <section id="sorotan" class="relative py-24 sm:py-32">
@@ -21,35 +26,35 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
     </div>
 
     <div class="mt-16 grid gap-24 sm:mt-24 sm:gap-32">
-      <!-- A. Pencarian -->
+      <!-- A. Asisten suara -->
       <article class="hl">
         <div class="hl-text" data-reveal>
-          <p class="kicker"><span class="kicker-ico"><Icon name="search" size={16} /></span>{h.search.kicker}</p>
-          <h3>{h.search.title}</h3>
-          <p class="desc">{h.search.desc}</p>
-          <button type="button" data-open-palette class="btn btn-ghost btn-sm mt-7">
-            {h.search.try}
-            <span class="flex gap-1"><span class="kbd">Ctrl</span><span class="kbd">Alt</span><span class="kbd">Space</span></span>
-          </button>
+          <p class="kicker"><span class="kicker-ico"><Icon name="mic" size={16} /></span>{h.voice.kicker}</p>
+          <h3>{h.voice.title}</h3>
+          <p class="desc">{h.voice.desc}</p>
+          <label class="mt-7 block max-w-xs">
+            <span class="text-xs font-semibold text-muted">{h.voice.rename}</span>
+            <span class="mt-2 flex items-center gap-2 rounded-2xl border border-line bg-surface px-3 py-2 focus-within:border-cyan/50">
+              <span class="text-sm font-semibold text-muted">{h.voice.hello}</span>
+              <input id="vd-name" value="Dzerly" maxlength="14" class="w-full bg-transparent text-sm font-bold outline-none" />
+            </span>
+          </label>
         </div>
         <div class="hl-visual" data-reveal style="--d:2">
-          <div class="mock-panel w-full max-w-md" id="search-demo" data-demo={JSON.stringify(h.search.demo)}>
-            <div class="flex items-center gap-3 border-b border-white/[.07] px-4 py-3.5">
-              <Icon name="search" size={18} class="text-cyan" />
-              <span class="text-[15px] text-white"><span id="sd-q"></span><i class="caret"></i></span>
-              <span class="ml-auto hidden gap-1 sm:flex"><span class="kbd-d">Ctrl</span><span class="kbd-d">Alt</span><span class="kbd-d">Space</span></span>
+          <div
+            class="mock-panel w-full max-w-md p-5"
+            id="voice-demo"
+            data-qa={JSON.stringify(h.voice.qa)}
+            data-wake={JSON.stringify(h.voice.wakeReply)}
+            data-hello={h.voice.hello}
+            data-waiting={h.voice.waiting}
+          >
+            <div class="flex items-center gap-3 border-b border-white/[.07] pb-4">
+              <span class="robot-eyes lg" id="vd-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+              <span class="ml-2 text-sm font-semibold text-white" id="vd-status">{h.voice.waiting}</span>
+              <span class="wave idle ml-auto text-cyan" id="vd-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
             </div>
-            <ul class="min-h-[168px] space-y-1 p-2" id="sd-res"></ul>
-          </div>
-          <template id="sd-row">
-            <li class="sd-row">
-              <span class="sd-ico"></span>
-              <span class="sd-title truncate"></span>
-              <span class="sd-kind"></span>
-            </li>
-          </template>
-          <div hidden id="sd-icons">
-            {Object.entries(resIcon).map(([k, v]) => <span data-k={k}><Icon name={v} size={15} /></span>)}
+            <div class="mt-4 flex min-h-[220px] flex-col justify-end gap-2.5" id="vd-chat" data-listening={h.voice.listening}></div>
           </div>
         </div>
       </article>
@@ -63,8 +68,10 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
         </div>
         <div class="hl-visual" data-reveal style="--d:2">
           <div class="relative w-full max-w-md" id="music-demo">
-            <div class="mx-auto mb-5 flex h-10 w-[88%] items-center gap-2.5 rounded-full border border-white/[.08] bg-[#060a12] px-4 text-[13px] text-[#d6e3ef] shadow-[0_18px_40px_-16px_rgb(0_0_0/0.8)]">
-              <span class="robot-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+            <div class="mx-auto mb-5 flex h-10 w-[88%] items-center justify-center gap-2.5 rounded-full border border-white/[.08] bg-[#060a12] px-4 text-[13px] text-[#d6e3ef] shadow-[0_18px_40px_-16px_rgb(0_0_0/0.8)]">
+              <span class="md-extra robot-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
+              <span class="md-extra font-semibold tabular-nums text-white" data-clock>09.41</span>
+              <span class="md-extra h-3.5 w-px bg-white/15"></span>
               <Icon name="music" size={13} class="shrink-0 text-cyan" />
               <span class="truncate text-white" id="md-cap">{h.music.lyrics[0]}</span>
             </div>
@@ -92,14 +99,70 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
                   {h.music.lyrics.map((l) => <li>{l}</li>)}
                 </ul>
               </div>
+              <div class="mt-3 flex items-center gap-2.5 border-t border-white/[.07] pt-3.5 text-[12.5px]">
+                <Icon name="focus" size={15} class="text-[#8da0b5]" />
+                {t.mock.focusMode}
+                <button class="tgl ml-auto" role="switch" aria-checked="true" aria-label={t.mock.focusMode}><i></i></button>
+              </div>
             </div>
             <p class="mt-3 text-center text-[11px] text-muted">{h.music.note}</p>
           </div>
         </div>
       </article>
 
-      <!-- C. Sholat -->
+      <!-- C. Pusat kontrol -->
       <article class="hl">
+        <div class="hl-text" data-reveal>
+          <p class="kicker"><span class="kicker-ico"><Icon name="sliders" size={16} /></span>{h.control.kicker}</p>
+          <h3>{h.control.title}</h3>
+          <p class="desc">{h.control.desc}</p>
+          <p class="mt-5 flex max-w-[34rem] items-center gap-2 text-sm text-muted">
+            <Icon name="mouse" size={16} class="shrink-0 text-cyan-ink" />{h.control.tip}
+          </p>
+        </div>
+        <div class="hl-visual" data-reveal style="--d:2">
+          <div class="w-full max-w-md">
+            <div class="mock-panel p-4 sm:p-5" id="control-demo">
+              <div class="grid grid-cols-4 gap-2">
+                {
+                  mc.tiles.map((label, i) => (
+                    <button
+                      type="button"
+                      class="cc-tile"
+                      data-cc={ccIcons[i]}
+                      data-momentary={ccMomentary[i] ? '' : undefined}
+                      aria-pressed={ccOn[i] ? 'true' : 'false'}
+                    >
+                      <span class="cc-ico"><Icon name={ccIcons[i]} size={18} /></span>
+                      <span class="cc-lbl">{label}</span>
+                      {i === 0 && <span class="cc-sub">{mc.wifiName}</span>}
+                    </button>
+                  ))
+                }
+              </div>
+              <div class="mt-4 grid gap-2.5">
+                <label class="cc-range" style="--v:62%">
+                  <Icon name="volume" size={17} class="cc-r-ico" />
+                  <span class="cc-r-lbl">{mc.volume}</span>
+                  <output class="cc-r-val">62</output>
+                  <input type="range" min="0" max="100" value="62" data-cc-range="volume" aria-label={mc.volume} />
+                </label>
+                <label class="cc-range" style="--v:80%">
+                  <Icon name="sun" size={17} class="cc-r-ico" />
+                  <span class="cc-r-lbl">{mc.brightness}</span>
+                  <output class="cc-r-val">80</output>
+                  <input type="range" min="0" max="100" value="80" data-cc-range="brightness" aria-label={mc.brightness} />
+                </label>
+              </div>
+              <div class="cc-flash" aria-hidden="true"><Icon name="lock" size={22} /></div>
+            </div>
+            <p class="mt-3 text-center text-[11px] text-muted">{h.control.note}</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- D. Sholat -->
+      <article class="hl hl-rev">
         <div class="hl-text" data-reveal>
           <p class="kicker"><span class="kicker-ico"><Icon name="moon" size={16} /></span>{h.prayer.kicker}</p>
           <h3>{h.prayer.title}</h3>
@@ -151,28 +214,35 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
         </div>
       </article>
 
-      <!-- D. Asisten suara -->
-      <article class="hl hl-rev">
-        <div class="hl-text" data-reveal>
-          <p class="kicker"><span class="kicker-ico"><Icon name="mic" size={16} /></span>{h.voice.kicker}</p>
-          <h3>{h.voice.title}</h3>
-          <p class="desc">{h.voice.desc}</p>
-          <label class="mt-7 block max-w-xs">
-            <span class="text-xs font-semibold text-muted">{h.voice.rename}</span>
-            <span class="mt-2 flex items-center gap-2 rounded-2xl border border-line bg-surface px-3 py-2 focus-within:border-cyan/50">
-              <span class="text-sm font-semibold text-muted">{h.voice.hello}</span>
-              <input id="vd-name" value="Dzerly" maxlength="14" class="w-full bg-transparent text-sm font-bold outline-none" />
-            </span>
-          </label>
+      <!-- Pita: Pencarian universal -->
+      <article class="ribbon glass" data-reveal>
+        <div>
+          <p class="kicker"><span class="kicker-ico"><Icon name="search" size={16} /></span>{h.search.kicker}</p>
+          <h3 class="ribbon-t">{h.search.title}</h3>
+          <p class="mt-3 max-w-md text-[0.97rem] leading-relaxed text-muted text-pretty">{h.search.desc}</p>
+          <button type="button" data-open-palette class="btn btn-ghost btn-sm mt-6">
+            {h.search.try}
+            <span class="flex gap-1"><span class="kbd">Ctrl</span><span class="kbd">Alt</span><span class="kbd">Space</span></span>
+          </button>
         </div>
-        <div class="hl-visual" data-reveal style="--d:2">
-          <div class="mock-panel w-full max-w-md p-5" id="voice-demo" data-qa={JSON.stringify(h.voice.qa)} data-hello={h.voice.hello}>
-            <div class="flex items-center gap-3 border-b border-white/[.07] pb-4">
-              <span class="robot-eyes lg" id="vd-eyes" data-track><i class="eye"></i><i class="eye"></i></span>
-              <span class="ml-2 text-sm font-semibold text-white" id="vd-status">{h.voice.listening}</span>
-              <span class="wave ml-auto text-cyan" id="vd-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        <div class="flex justify-center">
+          <div class="mock-panel w-full max-w-md" id="search-demo" data-demo={JSON.stringify(h.search.demo)}>
+            <div class="flex items-center gap-3 border-b border-white/[.07] px-4 py-3.5">
+              <Icon name="search" size={18} class="text-cyan" />
+              <span class="text-[15px] text-white"><span id="sd-q"></span><i class="caret"></i></span>
+              <span class="ml-auto hidden gap-1 sm:flex"><span class="kbd-d">Ctrl</span><span class="kbd-d">Alt</span><span class="kbd-d">Space</span></span>
             </div>
-            <div class="mt-4 flex min-h-[188px] flex-col justify-end gap-2.5" id="vd-chat"></div>
+            <ul class="min-h-[168px] space-y-1 p-2" id="sd-res"></ul>
+          </div>
+          <template id="sd-row">
+            <li class="sd-row">
+              <span class="sd-ico"></span>
+              <span class="sd-title truncate"></span>
+              <span class="sd-kind"></span>
+            </li>
+          </template>
+          <div hidden id="sd-icons">
+            {Object.entries(resIcon).map(([k, v]) => <span data-k={k}><Icon name={v} size={15} /></span>)}
           </div>
         </div>
       </article>
@@ -355,6 +425,129 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
   }
   #md-lines li.done {
     color: rgb(255 255 255 / 0.4);
+  }
+
+  #music-demo:not(.nofocus) .md-extra { display: none; }
+
+  /* Pusat kontrol */
+  #control-demo {
+    position: relative;
+    overflow: hidden;
+  }
+  .cc-tile {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 6px;
+    min-width: 0;
+    padding: 10px 4px 9px;
+    border-radius: 16px;
+    background: rgb(255 255 255 / 0.045);
+    border: 1px solid rgb(255 255 255 / 0.06);
+    transition: background 0.25s, border-color 0.25s, transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+  .cc-tile:hover { background: rgb(255 255 255 / 0.07); }
+  .cc-tile:active { transform: scale(0.94); }
+  .cc-ico {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #c4d3e2;
+    background: rgb(255 255 255 / 0.08);
+    transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+  }
+  .cc-tile[aria-pressed='true'] { border-color: rgb(42 212 255 / 0.3); background: rgb(42 212 255 / 0.08); }
+  .cc-tile[aria-pressed='true'] .cc-ico { color: #03121a; background: #2ad4ff; box-shadow: 0 6px 16px -6px rgb(42 212 255 / 0.8); }
+  .cc-lbl {
+    max-width: 100%;
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    color: #d6e3ef;
+  }
+  .cc-sub {
+    margin-top: -3px;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 9.5px;
+    color: #8da0b5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .cc-tile[aria-pressed='false'] .cc-sub { visibility: hidden; }
+  .cc-range {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 14px;
+    overflow: hidden;
+    border-radius: 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #e9f2fa;
+    background: rgb(255 255 255 / 0.06);
+    cursor: ew-resize;
+  }
+  .cc-range::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--v);
+    background: linear-gradient(90deg, rgb(42 212 255 / 0.45), rgb(42 212 255 / 0.25));
+    transition: width 0.08s linear;
+  }
+  .cc-range > :not(input) { position: relative; pointer-events: none; }
+  .cc-range :global(.cc-r-ico) { flex: none; color: #2ad4ff; }
+  .cc-r-val { margin-left: auto; font-family: var(--font-mono); font-size: 11.5px; color: #8da0b5; }
+  .cc-range input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+  .cc-range:focus-within { box-shadow: 0 0 0 2px rgb(42 212 255 / 0.6); }
+  .cc-flash {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: rgb(3 6 12 / 0.92);
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #control-demo.locked .cc-flash { opacity: 1; }
+
+  /* Pita pencarian */
+  .ribbon {
+    display: grid;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem;
+    border-radius: 28px;
+  }
+  @media (min-width: 640px) {
+    .ribbon { padding: 2.25rem; }
+  }
+  @media (min-width: 1024px) {
+    .ribbon { grid-template-columns: 1fr 1.1fr; gap: 3.5rem; padding: 2.75rem 3rem; }
+  }
+  .ribbon-t {
+    margin-top: 1rem;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   /* Sholat */
@@ -560,6 +753,13 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
       paused = !paused;
       root.classList.toggle('paused', paused);
     });
+    // Mode fokus musik: mati → jam & mata robot kembali tampil di kapsul
+    const focusTgl = root.querySelector<HTMLButtonElement>('.tgl')!;
+    focusTgl.addEventListener('click', () => {
+      const on = focusTgl.getAttribute('aria-checked') !== 'true';
+      focusTgl.setAttribute('aria-checked', String(on));
+      root.classList.toggle('nofocus', !on);
+    });
     lines.forEach((l, i) =>
       l.addEventListener('click', () => {
         t = i * 3;
@@ -594,16 +794,45 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
     );
   }
 
+  // ---------- Pusat kontrol ----------
+  {
+    const box = document.getElementById('control-demo')!;
+    box.querySelectorAll<HTMLButtonElement>('.cc-tile').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (b.dataset.momentary === undefined) {
+          b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+          return;
+        }
+        // Ubin sekali-tekan: nyala sebentar
+        b.setAttribute('aria-pressed', 'true');
+        if (b.dataset.cc === 'lock') box.classList.add('locked');
+        setTimeout(() => {
+          b.setAttribute('aria-pressed', 'false');
+          box.classList.remove('locked');
+        }, 1100);
+      }),
+    );
+    box.querySelectorAll<HTMLInputElement>('[data-cc-range]').forEach((r) =>
+      r.addEventListener('input', () => {
+        const wrap = r.parentElement!;
+        wrap.style.setProperty('--v', `${r.value}%`);
+        wrap.querySelector('output')!.textContent = r.value;
+      }),
+    );
+  }
+
   // ---------- D. Asisten suara ----------
   {
     const box = document.getElementById('voice-demo')!;
     const qa: string[][] = JSON.parse(box.dataset.qa!);
+    const [wakeText, wakeGloss]: string[] = JSON.parse(box.dataset.wake!);
     const hello = box.dataset.hello!;
+    const waiting = box.dataset.waiting!;
     const chat = document.getElementById('vd-chat')!;
     const eyes = document.getElementById('vd-eyes')!;
     const wave = document.getElementById('vd-wave')!;
     const status = document.getElementById('vd-status')!;
-    const listening = status.textContent!;
+    const listening = chat.dataset.listening!;
     const input = document.getElementById('vd-name') as HTMLInputElement;
     let name = 'Dzerly';
     let visible = false;
@@ -634,25 +863,40 @@ const resIcon: Record<string, string> = { app: 'app', web: 'globe', clip: 'clipb
     };
     const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
+    const withName = (s: string) => esc(s).replace('{name}', `<span data-name>${esc(name)}</span>`);
+    const botLine = (text: string, gloss: string) =>
+      `${withName(text.replace('{time}', now()))}${gloss ? `<span class="gloss">${withName(gloss.replace('{time}', now()))}</span>` : ''}`;
+    const speak = async (html: string, ms: number) => {
+      wave.classList.add('idle');
+      eyes.className = 'robot-eyes lg talking';
+      status.textContent = name;
+      add('bot', html);
+      await sleep(ms);
+    };
+
     const loop = async () => {
       if (running) return;
       running = true;
       let i = 0;
       while (visible) {
         const [q, a, gloss] = qa[i % qa.length];
+        // 1. Diam sampai namanya dipanggil
+        eyes.className = 'robot-eyes lg';
+        wave.classList.add('idle');
+        status.textContent = waiting;
+        await sleep(1000);
+        add('me', `${esc(hello)} <b data-name>${esc(name)}</b>`);
+        await sleep(650);
+        // 2. Menjawab dulu, baru mendengarkan
+        await speak(botLine(wakeText, wakeGloss), 1100);
         eyes.className = 'robot-eyes lg listening';
         wave.classList.remove('idle');
         status.textContent = listening;
         await sleep(900);
-        add('me', `${esc(hello)} <b data-name>${esc(name)}</b>, ${esc(q)}`);
-        await sleep(900);
-        wave.classList.add('idle');
-        eyes.className = 'robot-eyes lg talking';
-        status.textContent = name;
-        add('bot', `${esc(a.replace('{time}', now()))}${gloss ? `<span class="gloss">${esc(gloss.replace('{time}', now()))}</span>` : ''}`);
-        await sleep(1700);
-        eyes.className = 'robot-eyes lg';
-        await sleep(900);
+        add('me', esc(q));
+        await sleep(850);
+        // 3. Menjalankan perintah
+        await speak(botLine(a, gloss), 1900);
         i++;
       }
       eyes.className = 'robot-eyes lg';

@@ -58,9 +58,15 @@ const items = [
     background: transparent;
     overflow: visible;
   }
+  /* Tanpa backdrop-filter: blur layar penuh membuat frame pertama tersendat */
   .palette::backdrop {
-    background: rgb(2 4 10 / 0.55);
-    backdrop-filter: blur(6px);
+    background: rgb(2 4 10 / 0.68);
+  }
+  .palette[open]::backdrop {
+    animation: pal-fade 0.25s ease;
+  }
+  @keyframes pal-fade {
+    from { opacity: 0; }
   }
   .pal-box {
     overflow: hidden;
@@ -70,17 +76,14 @@ const items = [
     color: #d6e3ef;
     box-shadow: 0 40px 100px -20px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(42 212 255 / 0.08);
   }
+  /* Hanya opacity + transform → berjalan di compositor, mulus */
   .palette[open] .pal-box {
-    animation: pal-in 0.5s cubic-bezier(0.32, 1.2, 0.5, 1);
+    animation: pal-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   }
   @keyframes pal-in {
     from {
-      clip-path: inset(0 30% calc(100% - 56px) 30% round 28px);
-      opacity: 0.4;
-    }
-    to {
-      clip-path: inset(0 0 0 0 round 23px);
-      opacity: 1;
+      opacity: 0;
+      transform: translateY(-10px) scale(0.98);
     }
   }
   #pal-input:focus-visible {

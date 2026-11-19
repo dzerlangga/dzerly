@@ -53,7 +53,7 @@ const h = t.hero;
     </div>
 
     <div class="hero-in relative mt-14 sm:mt-20" style="--i:7">
-      <div class="pointer-events-none absolute inset-x-[10%] -top-10 h-40 rounded-full bg-cyan/20 blur-[90px]" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute inset-x-[10%] -top-10 h-40 rounded-full bg-cyan/20 hero-glow" aria-hidden="true"></div>
       <HeroMock t={t} lang={lang} />
     </div>
   </div>
@@ -63,7 +63,6 @@ const h = t.hero;
   .hero-in {
     opacity: 0;
     transform: translateY(22px);
-    filter: blur(8px);
     animation: hero-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: calc(var(--i) * 90ms + 80ms);
   }
@@ -71,8 +70,11 @@ const h = t.hero;
     to {
       opacity: 1;
       transform: none;
-      filter: none;
     }
+  }
+  .hero-glow {
+    -webkit-mask-image: radial-gradient(closest-side, #000 10%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 10%, transparent 100%);
   }
   .h-13 {
     height: 3.25rem;

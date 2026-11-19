@@ -9,7 +9,7 @@ const id = {
   meta: {
     title: 'Dzerly — Floating bar serba bisa untuk Windows',
     description:
-      'Jam, jadwal sholat, lirik musik, agenda, clipboard, dan pencarian cepat dalam satu kapsul kecil di atas layar Windows.',
+      'Jam, jadwal sholat, lirik musik, kontrol perangkat, asisten suara, dan pencarian cepat dalam satu kapsul kecil di atas layar Windows.',
   },
   nav: {
     links: [
@@ -31,7 +31,7 @@ const id = {
     titleB: 'di satu kapsul kecil',
     titleC: 'di atas layar.',
     subtitle:
-      'Dzerly adalah floating bar untuk Windows yang menyatukan jam, jadwal sholat, musik, agenda, clipboard, dan pencarian cepat. Muncul saat kamu butuh, menghilang saat kamu fokus.',
+      'Dzerly adalah floating bar untuk Windows yang menyatukan jam, jadwal sholat, musik, kontrol perangkat, agenda, clipboard, dan asisten suara. Muncul saat kamu butuh, menghilang saat kamu fokus.',
     primary: SITE.isFree ? 'Unduh gratis untuk Windows' : 'Unduh untuk Windows',
     secondary: 'Lihat fitur',
     meta: 'Windows 10 & 11 · ±3 MB · Bahasa Indonesia & Inggris',
@@ -40,7 +40,8 @@ const id = {
   mock: {
     weather: 'Cerah berawan',
     lyric: 'lampu kota menyala satu per satu',
-    tabs: ['Hari ini', 'Musik', 'Sholat', 'Hub', 'Otomasi', 'Dev'],
+    tabs: ['Hari ini', 'Kontrol', 'Musik', 'Sholat', 'Asisten', 'Hub', 'Otomasi', 'Dev'],
+    focusMode: 'Mode fokus musik',
     today: {
       eyebrow: 'RINGKASAN HARI INI',
       agenda: 'Agenda',
@@ -87,6 +88,21 @@ const id = {
       macro: 'Makro',
       macros: ['Mode rapat', 'Mulai kerja', 'Pulang'],
     },
+    control: {
+      tiles: ['Wi-Fi', 'Bluetooth', 'Mode gelap', 'Bisukan', 'Lampu malam', 'Hemat baterai', 'Ambil warna', 'Kunci layar'],
+      wifiName: 'Rumah-5G',
+      volume: 'Volume',
+      brightness: 'Kecerahan',
+    },
+    assistant: {
+      waiting: 'Menunggu namanya dipanggil…',
+      chat: [
+        ['me', 'Halo Dzerly'],
+        ['bot', 'Iya, Dzerly di sini.'],
+        ['me', 'putar lagu Tulus'],
+        ['bot', 'Siap, memutar Tulus di YouTube.'],
+      ],
+    },
     dev: {
       repos: 'Repositori',
       build: 'Build',
@@ -98,6 +114,8 @@ const id = {
   how: {
     eyebrow: 'Cara kerja',
     title: 'Tiga langkah, lalu lupakan.',
+    onboarding:
+      'Saat pertama kali dibuka, Dzerly menampilkan slide pengenalan singkat tentang apa itu Dzerly dan fitur-fiturnya. Slide ini bisa dibuka lagi kapan saja dari Pengaturan.',
     steps: [
       {
         title: 'Selalu di atas, tidak menghalangi.',
@@ -105,7 +123,7 @@ const id = {
       },
       {
         title: 'Klik untuk membuka.',
-        desc: 'Kapsul mengembang menjadi panel berisi semua alat, dikelompokkan dalam tab.',
+        desc: 'Kapsul mengembang menjadi panel berisi semua alat, dikelompokkan dalam tab yang urutannya bisa kamu atur.',
       },
       {
         title: 'Arahkan ke tepi atas untuk memanggil lagi.',
@@ -132,7 +150,7 @@ const id = {
     music: {
       kicker: 'Musik dan lirik berjalan',
       title: 'Liriknya ikut bernyanyi.',
-      desc: 'Putar lagu di Spotify, YouTube Music, atau layanan lain di browser, dan lirik yang sedang dinyanyikan muncul langsung di kapsul. Simpan tautan lagu favorit ke antrean untuk diputar lagi nanti.',
+      desc: 'Putar lagu di Spotify, YouTube Music, atau layanan lain di browser, dan lirik yang sedang dinyanyikan muncul langsung di kapsul. Mode fokus menyembunyikan jam dan mata robot selama musik diputar, jadi kapsul hanya berisi lagumu.',
       lyrics: [
         'jalanan basah sisa hujan sore',
         'lampu kota menyala satu per satu',
@@ -142,6 +160,13 @@ const id = {
         'aku masih di sini menunggu',
       ],
       note: 'Contoh lagu & lirik ilustrasi',
+    },
+    control: {
+      kicker: 'Pusat kontrol',
+      title: 'Pengaturan Windows, tinggal klik.',
+      desc: 'Wi-Fi, Bluetooth, mode gelap, bisukan suara, lampu malam, penghemat baterai, pengambil warna, dan kunci layar, plus slider besar untuk volume dan kecerahan. Semua dalam satu tab, tanpa membuka Pengaturan Windows.',
+      tip: 'Di kapsul, cukup scroll untuk volume dan Shift + scroll untuk kecerahan.',
+      note: 'Coba klik ubinnya',
     },
     prayer: {
       kicker: 'Jadwal sholat dan adzan',
@@ -155,15 +180,18 @@ const id = {
     voice: {
       kicker: 'Asisten suara',
       title: '“Halo Dzerly”, lalu tanya saja.',
-      desc: 'Tanya jam, jadwal sholat, pemakaian CPU/RAM, unduhan, atau daftar tugas dengan suara dalam Bahasa Indonesia. Dzerly menjawab dengan suara. Nama asisten bisa kamu ganti sesukamu.',
+      desc: 'Panggil “Dzerly” atau “Halo Dzerly”, tunggu jawaban “Iya, Dzerly di sini”, lalu beri perintah. Tanya jam, jadwal sholat, cuaca, atau pengetahuan umum, hitung cepat, cek kurs, buka situs, sampai minta “putar lagu Tulus” dan lagunya langsung diputar di YouTube. Sebelum dipanggil, asisten diam dan tidak mengetik apa pun. Nama asisten bisa kamu ganti sesukamu.',
       hello: 'Halo',
       rename: 'Ganti nama asisten',
       listening: 'Mendengarkan…',
+      waiting: 'Menunggu namanya dipanggil…',
+      wakeReply: ['Iya, {name} di sini.', ''],
       qa: [
         ['jam berapa sekarang?', 'Sekarang pukul {time}.', ''],
+        ['putar lagu Tulus', 'Siap, memutar Tulus di YouTube.', ''],
+        ['cuaca hari ini gimana?', 'Cerah berawan, 28 derajat.', ''],
+        ['berapa 15 persen dari 240 ribu?', '15 persen dari 240 ribu adalah 36 ribu.', ''],
         ['kapan waktu Maghrib?', 'Maghrib pukul 17.52 untuk Jakarta.', ''],
-        ['berapa pemakaian CPU?', 'CPU 23 persen, RAM 61 persen.', ''],
-        ['apa tugasku hari ini?', 'Ada 3 tugas: balas email klien, perpanjang SIM, bayar tagihan internet.', ''],
       ] as [string, string, string][],
     },
   },
@@ -182,6 +210,7 @@ const id = {
           { icon: 'list-checks', title: 'Agenda dan to-do', desc: 'Catat rencana per tanggal dan centang tugas yang selesai.' },
           { icon: 'timer', title: 'Timer, stopwatch, dan sesi fokus', desc: 'Timer hitung mundur, stopwatch, dan sesi fokus 25 menit ala Pomodoro.' },
           { icon: 'hourglass', title: 'Tenggat', desc: 'Daftar deadline dengan pengingat sebelum waktunya habis.' },
+          { icon: 'search', title: 'Pencarian universal', desc: 'Ctrl + Alt + Space untuk aplikasi, file, perintah, situs, clipboard, dan agenda.' },
         ],
       },
       {
@@ -195,6 +224,18 @@ const id = {
           { icon: 'calendar-sync', title: 'Sinkronisasi Google Calendar', desc: 'Tampilkan acara dari kalender Google lewat tautan iCal.' },
           { icon: 'graduation', title: 'Jadwal kuliah dan kerja', desc: 'Jadwal mingguan untuk mata kuliah atau shift kerja.' },
           { icon: 'id-card', title: 'Masa berlaku dokumen', desc: 'Ingatkan sebelum KTP, SIM, paspor, atau dokumen lain kedaluwarsa.' },
+        ],
+      },
+      {
+        id: 'asisten',
+        icon: 'mic',
+        title: 'Asisten suara',
+        items: [
+          { icon: 'mic', title: 'Panggil dengan nama', desc: '“Dzerly” atau “Halo Dzerly”. Asisten menjawab dulu, baru mendengarkan perintahmu.' },
+          { icon: 'help', title: 'Tanya apa saja', desc: 'Jam, jadwal sholat, cuaca, baterai, CPU/RAM, pengetahuan umum, hitungan, dan kurs mata uang. Jawaban diucapkan dengan suara robot.' },
+          { icon: 'play', title: 'Putar lagu dengan suara', desc: '“Putar lagu …” atau “aku mau dengar …” langsung membuka dan memutar videonya di YouTube. Tambahkan “di Spotify” untuk mencari di Spotify.' },
+          { icon: 'globe', title: 'Buka situs', desc: '“Buka YouTube”, “buka Gmail”, dan situs populer lainnya.' },
+          { icon: 'spell-check', title: 'Autocorrect ucapan', desc: 'Kata yang salah dengar dibetulkan otomatis, misalnya “yutub” menjadi YouTube. Kamu juga bisa menambah koreksi pribadi.' },
         ],
       },
       {
@@ -212,7 +253,22 @@ const id = {
         title: 'Musik',
         items: [
           { icon: 'mic-vocal', title: 'Lirik di kapsul', desc: 'Lirik bergulir mengikuti lagu, satu baris aktif tampil di kapsul saat panel tertutup.' },
+          { icon: 'focus', title: 'Mode fokus musik', desc: 'Saat lagu diputar, kapsul hanya menampilkan lagu. Bisa dimatikan bila kamu tetap ingin melihat jam dan mata robot.' },
           { icon: 'list-music', title: 'Antrean lagu', desc: 'Simpan tautan YouTube, Spotify, dan lainnya untuk diputar lagi.' },
+        ],
+      },
+      {
+        id: 'kontrol',
+        icon: 'sliders',
+        title: 'Kontrol & perangkat',
+        items: [
+          { icon: 'sliders', title: 'Pusat kontrol', desc: 'Wi-Fi (beserta nama jaringannya), Bluetooth, mode gelap Windows, bisukan suara, lampu malam, penghemat baterai, pengambil warna, dan kunci layar.' },
+          { icon: 'volume', title: 'Volume dan kecerahan', desc: 'Slider besar di Pusat Kontrol, atau cukup scroll di kapsul (Shift + scroll untuk kecerahan).' },
+          { icon: 'mouse', title: 'Gestur cepat', desc: 'Klik dua kali kapsul untuk putar/jeda musik.' },
+          { icon: 'eye', title: 'Indikator privasi', desc: 'Titik hijau/oranye saat kamera atau mikrofon dipakai. Saat meeting, klik kanan kapsul untuk membisukan mikrofon.' },
+          { icon: 'message', title: 'Notifikasi aplikasi', desc: 'Pesan WhatsApp, Telegram, email, dan lainnya tampil di kapsul.' },
+          { icon: 'key', title: 'Salin OTP otomatis', desc: 'Kode OTP dari notifikasi langsung tersalin, siap ditempel.' },
+          { icon: 'bluetooth', title: 'Baterai Bluetooth', desc: 'Lihat sisa baterai earbuds, headset, atau mouse Bluetooth.' },
         ],
       },
       {
@@ -220,23 +276,11 @@ const id = {
         icon: 'clipboard',
         title: 'Clipboard & file',
         items: [
-          { icon: 'clipboard', title: 'Riwayat clipboard', desc: 'Semua teks yang kamu salin tersimpan, bisa dicari dan disematkan.' },
+          { icon: 'clipboard', title: 'Riwayat clipboard', desc: 'Teks yang kamu salin tersimpan, bisa dicari dan disematkan.' },
           { icon: 'archive', title: 'Rak file', desc: 'Seret file ke kapsul untuk menaruhnya sementara, lalu tempel di Explorer, WhatsApp, atau email.' },
           { icon: 'smartphone', title: 'Kirim file dari HP', desc: 'Pindai kode QR dengan HP untuk mengirim file dan teks ke PC lewat Wi-Fi yang sama, atau unduh file dari rak ke HP. Tanpa kabel, tanpa aplikasi tambahan di HP.' },
           { icon: 'crop', title: 'Tangkap layar', desc: 'Potong layar, screenshot penuh, rekam layar, dan buka folder screenshot dengan satu klik.' },
           { icon: 'download', title: 'Pantau unduhan', desc: 'Lihat file yang sedang diunduh browser beserta lajunya.' },
-        ],
-      },
-      {
-        id: 'notifikasi',
-        icon: 'bell',
-        title: 'Notifikasi & perangkat',
-        items: [
-          { icon: 'message', title: 'Notifikasi aplikasi', desc: 'Pesan WhatsApp, Telegram, email, dan lainnya tampil di kapsul.' },
-          { icon: 'key', title: 'Salin OTP otomatis', desc: 'Kode OTP dari notifikasi langsung tersalin, siap ditempel.' },
-          { icon: 'bluetooth', title: 'Baterai Bluetooth', desc: 'Lihat sisa baterai earbuds, headset, atau mouse Bluetooth.' },
-          { icon: 'eye', title: 'Indikator privasi', desc: 'Tahu aplikasi mana yang sedang memakai kamera atau mikrofon.' },
-          { icon: 'mic', title: 'Kontrol mikrofon dan volume', desc: 'Tampilan status mute mikrofon dan level volume yang rapi.' },
         ],
       },
       {
@@ -266,10 +310,12 @@ const id = {
         title: 'Sistem & kesehatan',
         items: [
           { icon: 'cpu', title: 'Monitor CPU dan RAM', desc: 'Pemakaian sumber daya secara langsung.' },
-          { icon: 'cloud-sun', title: 'Cuaca', desc: 'Suhu dan kondisi cuaca di lokasimu.' },
+          { icon: 'cloud-sun', title: 'Cuaca', desc: 'Suhu dan kondisi cuaca di lokasimu, plus kabar bila hujan akan turun dalam satu jam.' },
           { icon: 'droplet', title: 'Pengingat minum air', desc: 'Target gelas harian dengan pengingat berkala.' },
-          { icon: 'eye-off', title: 'Istirahat mata', desc: 'Pengingat rutin untuk mengalihkan pandangan dari layar.' },
-          { icon: 'minimize', title: 'Sembunyi saat layar penuh', desc: 'Dzerly menyingkir otomatis saat kamu menonton atau bermain game.' },
+          { icon: 'eye-off', title: 'Istirahat mata', desc: 'Robot memperagakan senam mata secara berkala agar kamu mengalihkan pandangan dari layar.' },
+          { icon: 'minimize', title: 'Sembunyi saat layar penuh', desc: 'Dzerly menyingkir otomatis saat kamu menonton, bermain game, atau presentasi.' },
+          { icon: 'power', title: 'Mulai bersama Windows', desc: 'Dzerly terbuka otomatis setiap kali kamu masuk ke Windows.' },
+          { icon: 'monitor', title: 'Multi-monitor', desc: 'Pilih layar tempat Dzerly tampil, atau biarkan Dzerly pindah ke layar tempat kursormu berada.' },
         ],
       },
     ] as Category[],
@@ -298,7 +344,10 @@ const id = {
   personalize: {
     eyebrow: 'Personalisasi',
     title: 'Buat Dzerly terasa milikmu.',
-    subtitle: 'Coba langsung. Semua pilihan ini ada di Pengaturan aplikasi.',
+    subtitle:
+      'Semua diatur dari jendela Pengaturan yang rapi: menu di samping, kotak pencarian (Ctrl + F), dan pratinjau langsung. Perubahan tampilan langsung terlihat tanpa perlu disimpan. Coba sebagian di sini.',
+    shape: 'Bentuk',
+    shapes: { capsule: 'Kapsul', notch: 'Notch' },
     palette: '9 palet warna',
     custom: 'Warna sendiri',
     style: '6 gaya panel',
@@ -317,15 +366,18 @@ const id = {
       ['exercise', 'Senam'],
     ],
     eyeColor: 'Warna mata',
-    widgets: 'Widget di kapsul',
-    widgetNames: { clock: 'Jam', weather: 'Cuaca', battery: 'Baterai' },
+    widgets: 'Isi kapsul',
+    widgetNames: { eyes: 'Mata robot', clock: 'Jam', info: 'Sholat/cuaca' },
     language: 'Bahasa',
     points: [
+      'Bentuk kapsul yang melayang, atau notch yang menempel di tepi atas layar.',
       '9 palet warna, atau warna aksen sendiri.',
-      '6 gaya panel: Solid, Glass, Frosted, AMOLED, Aurora, Minimal.',
-      'Tema gelap dan terang, transparansi, sudut panel, dan ukuran tampilan.',
-      'Mata robot yang mengikuti kursor dengan beberapa suasana hati.',
-      'Pilih widget yang ingin ditampilkan.',
+      '6 gaya panel: Solid, Glass, Frosted, AMOLED, Aurora, Minimal. Gaya Solid bisa diberi warna panel dan teks sendiri.',
+      'Tema gelap dan terang, transparansi kaca, sudut panel, dan ukuran tampilan (75–130%).',
+      'Robot yang bisa didandani: 7 bentuk mata, 8 aksesori (kacamata, topi, headphone, pita, dan lainnya), warna mata bebas, gerakan mata santai atau mengikuti kursor.',
+      'Isi kapsul sesukamu: mata robot, jam (dengan atau tanpa tanggal), dan info sholat/cuaca.',
+      'Kapsul idle mengecil dan bergantian menampilkan jam, cuaca, mata robot, atau jadwal sholat.',
+      'Atur urutan menu panel cukup dengan menyeret, dan pilih widget yang ingin ditampilkan.',
       'Bahasa Indonesia atau Inggris.',
     ],
     palettes: { dzerly: 'Dzerly', matcha: 'Matcha', senja: 'Senja', neon: 'Neon', ocean: 'Samudra', sakura: 'Sakura', lavender: 'Lavender', gold: 'Emas', mono: 'Mono' },
@@ -336,7 +388,7 @@ const id = {
     points: [
       { icon: 'hard-drive', title: 'Tersimpan lokal.', desc: 'Agenda, tugas, clipboard, dan pengaturan disimpan di PC-mu, tidak di server kami.' },
       { icon: 'user-x', title: 'Tanpa akun.', desc: 'Langsung pakai tanpa daftar atau login.' },
-      { icon: 'wifi', title: 'Koneksi hanya bila perlu.', desc: 'Internet dipakai untuk jadwal sholat, cuaca, lirik, dan pengenalan suara. Kirim file dari HP berjalan di jaringan Wi-Fi lokalmu sendiri.' },
+      { icon: 'wifi', title: 'Koneksi hanya bila perlu.', desc: 'Internet dipakai untuk jadwal sholat, cuaca, lirik, pengenalan suara, dan jawaban asisten yang dicari online (Wikipedia, DuckDuckGo, kurs, pencarian lagu di YouTube). Kirim file dari HP berjalan di jaringan Wi-Fi lokalmu sendiri.' },
     ],
   },
   download: {
@@ -347,6 +399,7 @@ const id = {
       ['Komponen', 'Microsoft Edge WebView2 Runtime (bawaan Windows 11)'],
       ['Ukuran unduhan', '±3 MB (installer .exe) atau ±4 MB (.msi)'],
       ['Ekstensi (opsional)', 'Google Chrome atau Microsoft Edge'],
+      ['Mikrofon (opsional)', 'Untuk asisten suara'],
     ],
     exe: 'Unduh installer (.exe)',
     exeNote: 'Direkomendasikan',
@@ -415,21 +468,29 @@ const id = {
       { q: 'Apakah Dzerly berjalan di macOS atau Linux?', a: 'Saat ini Dzerly hanya tersedia untuk Windows 10 dan 11.' },
       {
         q: 'Apakah Dzerly memutar musik sendiri?',
-        a: 'Tidak. Dzerly menampilkan informasi dan lirik dari lagu yang kamu putar di browser lewat ekstensi Dzerly Media Bridge. Pemutaran, login, dan kontrol tetap di layanan musikmu.',
+        a: 'Dzerly tidak punya pemutar musik sendiri. Lagu tetap diputar di layanan musikmu di browser, dan Dzerly menampilkan judul serta liriknya lewat ekstensi Dzerly Media Bridge. Kamu juga bisa meminta asisten “putar lagu …”, lalu Dzerly membuka lagunya di YouTube.',
       },
       {
         q: 'Apakah asisten suara memakai AI di cloud?',
-        a: 'Jawaban asisten dibuat dari data lokal aplikasi, tanpa layanan AI. Pengenalan suaranya memakai fitur bawaan WebView dan mungkin memerlukan internet.',
+        a: 'Tidak. Pertanyaan sehari-hari seperti jam, jadwal sholat, cuaca, dan kondisi PC dijawab dari data di aplikasi. Pertanyaan pengetahuan umum dan kurs dicari di Wikipedia, DuckDuckGo, dan layanan kurs. Bila tidak ada jawaban singkat, Dzerly membukakan hasil Google. Pengenalan suaranya memakai fitur bawaan WebView dan memerlukan internet.',
+      },
+      {
+        q: 'Apakah asisten mendengarkan terus?',
+        a: 'Mikrofon aktif untuk menunggu namanya dipanggil. Sebelum kamu memanggil “Dzerly” atau “Halo Dzerly”, asisten tidak menampilkan ketikan dan tidak menjalankan perintah apa pun.',
       },
       {
         q: 'Kenapa Windows menampilkan peringatan SmartScreen?',
-        a: 'Karena versi ini belum ditandatangani secara digital. Aplikasi aman dipasang. Klik “More info” lalu “Run anyway”.',
+        a: 'Karena versi ini belum ditandatangani secara digital. Klik “More info” lalu “Run anyway”.',
       },
       {
         q: 'Apakah Dzerly mengganggu saat bermain game atau menonton?',
         a: 'Tidak. Dzerly otomatis bersembunyi saat ada aplikasi layar penuh, dan kapsulnya menghilang sendiri saat tidak dipakai.',
       },
       { q: 'Bagaimana cara memanggil pencarian?', a: 'Tekan Ctrl + Alt + Space dari mana saja.' },
+      {
+        q: 'Bagaimana kalau saya punya lebih dari satu monitor?',
+        a: 'Pilih monitor di Pengaturan → Tampilan, atau pilih “Ikuti posisi kursor” agar Dzerly pindah ke layar yang sedang kamu pakai.',
+      },
     ],
   },
   cta: {
@@ -473,7 +534,7 @@ const en: Content = {
   meta: {
     title: 'Dzerly — The do-it-all floating bar for Windows',
     description:
-      'Clock, prayer times, music lyrics, agenda, clipboard, and quick search in one small capsule at the top of your Windows screen.',
+      'Clock, prayer times, music lyrics, device controls, a voice assistant, and quick search in one small capsule at the top of your Windows screen.',
   },
   nav: {
     links: [
@@ -495,7 +556,7 @@ const en: Content = {
     titleB: 'in one small capsule',
     titleC: 'at the top of your screen.',
     subtitle:
-      'Dzerly is a floating bar for Windows that brings together your clock, prayer times, music, agenda, clipboard, and quick search. It shows up when you need it and disappears when you focus.',
+      'Dzerly is a floating bar for Windows that brings together your clock, prayer times, music, device controls, agenda, clipboard, and a voice assistant. It shows up when you need it and disappears when you focus.',
     primary: SITE.isFree ? 'Download free for Windows' : 'Download for Windows',
     secondary: 'See features',
     meta: 'Windows 10 & 11 · ~3 MB · English & Indonesian',
@@ -504,7 +565,8 @@ const en: Content = {
   mock: {
     weather: 'Partly cloudy',
     lyric: 'city lights come on one by one',
-    tabs: ['Today', 'Music', 'Prayer', 'Hub', 'Automation', 'Dev'],
+    tabs: ['Today', 'Controls', 'Music', 'Prayer', 'Assistant', 'Hub', 'Automation', 'Dev'],
+    focusMode: 'Music focus mode',
     today: {
       eyebrow: "TODAY'S SUMMARY",
       agenda: 'Agenda',
@@ -551,6 +613,21 @@ const en: Content = {
       macro: 'Macros',
       macros: ['Meeting mode', 'Start work', 'Go home'],
     },
+    control: {
+      tiles: ['Wi-Fi', 'Bluetooth', 'Dark mode', 'Mute', 'Night light', 'Battery saver', 'Color picker', 'Lock screen'],
+      wifiName: 'Home-5G',
+      volume: 'Volume',
+      brightness: 'Brightness',
+    },
+    assistant: {
+      waiting: 'Waiting for its name…',
+      chat: [
+        ['me', 'Halo Dzerly'],
+        ['bot', 'Iya, Dzerly di sini.'],
+        ['me', 'putar lagu Tulus'],
+        ['bot', 'Siap, memutar Tulus di YouTube.'],
+      ],
+    },
     dev: {
       repos: 'Repositories',
       build: 'Build',
@@ -562,6 +639,8 @@ const en: Content = {
   how: {
     eyebrow: 'How it works',
     title: 'Three steps, then forget about it.',
+    onboarding:
+      'The first time you open Dzerly, a short set of intro slides explains what it is and what it can do. You can replay them any time from Settings.',
     steps: [
       {
         title: 'Always on top, never in the way.',
@@ -569,7 +648,7 @@ const en: Content = {
       },
       {
         title: 'Click to open.',
-        desc: 'The capsule expands into a panel with all your tools, grouped into tabs.',
+        desc: 'The capsule expands into a panel with all your tools, grouped into tabs you can reorder.',
       },
       {
         title: 'Point at the top edge to bring it back.',
@@ -596,7 +675,7 @@ const en: Content = {
     music: {
       kicker: 'Music and live lyrics',
       title: 'The lyrics sing along.',
-      desc: 'Play songs on Spotify, YouTube Music, or other services in your browser, and the line being sung shows up right in the capsule. Save links to your favorite songs in a queue to play again later.',
+      desc: 'Play songs on Spotify, YouTube Music, or other services in your browser, and the line being sung shows up right in the capsule. Focus mode hides the clock and robot eyes while music plays, so the capsule shows only your song.',
       lyrics: [
         'wet streets after the evening rain',
         'city lights come on one by one',
@@ -606,6 +685,13 @@ const en: Content = {
         "i'm still right here, waiting",
       ],
       note: 'Sample song & illustrative lyrics',
+    },
+    control: {
+      kicker: 'Control center',
+      title: 'Windows settings, one click away.',
+      desc: 'Wi-Fi, Bluetooth, dark mode, mute, night light, battery saver, color picker, and lock screen, plus big sliders for volume and brightness. All in one tab, without opening Windows Settings.',
+      tip: 'On the capsule, just scroll for volume and Shift + scroll for brightness.',
+      note: 'Try clicking the tiles',
     },
     prayer: {
       kicker: 'Prayer times and adhan',
@@ -619,15 +705,18 @@ const en: Content = {
     voice: {
       kicker: 'Voice assistant',
       title: '“Halo Dzerly”, then just ask.',
-      desc: 'Ask for the time, prayer times, CPU/RAM usage, downloads, or your to-do list by voice, in Indonesian. Dzerly answers out loud. You can rename the assistant to anything you like.',
+      desc: 'Say “Dzerly” or “Halo Dzerly”, wait for “Iya, Dzerly di sini” (“Yes, Dzerly here”), then give a command. Ask for the time, prayer times, the weather, or general knowledge, do quick math, check exchange rates, open websites, or say “putar lagu Tulus” (“play Tulus”) and the song starts on YouTube. Until you call it, the assistant stays quiet and types nothing. You can rename the assistant to anything you like.',
       hello: 'Halo',
       rename: 'Rename the assistant',
       listening: 'Listening…',
+      waiting: 'Waiting for its name…',
+      wakeReply: ['Iya, {name} di sini.', 'Yes, {name} here.'],
       qa: [
         ['jam berapa sekarang?', 'Sekarang pukul {time}.', 'What time is it? — It’s {time}.'],
+        ['putar lagu Tulus', 'Siap, memutar Tulus di YouTube.', 'Play Tulus — Playing Tulus on YouTube.'],
+        ['cuaca hari ini gimana?', 'Cerah berawan, 28 derajat.', 'Weather today? — Partly cloudy, 28 degrees.'],
+        ['berapa 15 persen dari 240 ribu?', '15 persen dari 240 ribu adalah 36 ribu.', '15% of 240,000? — 36,000.'],
         ['kapan waktu Maghrib?', 'Maghrib pukul 17.52 untuk Jakarta.', 'When is Maghrib? — 17:52 in Jakarta.'],
-        ['berapa pemakaian CPU?', 'CPU 23 persen, RAM 61 persen.', 'CPU usage? — CPU 23%, RAM 61%.'],
-        ['apa tugasku hari ini?', 'Ada 3 tugas: balas email klien, perpanjang SIM, bayar tagihan internet.', 'My tasks today? — 3 tasks.'],
       ],
     },
   },
@@ -646,6 +735,7 @@ const en: Content = {
           { icon: 'list-checks', title: 'Agenda and to-do', desc: 'Plan by date and tick off finished tasks.' },
           { icon: 'timer', title: 'Timer, stopwatch, and focus', desc: 'Countdown timer, stopwatch, and 25-minute Pomodoro-style focus sessions.' },
           { icon: 'hourglass', title: 'Deadlines', desc: 'A list of deadlines with reminders before time runs out.' },
+          { icon: 'search', title: 'Universal search', desc: 'Ctrl + Alt + Space for apps, files, commands, websites, clipboard, and agenda.' },
         ],
       },
       {
@@ -659,6 +749,18 @@ const en: Content = {
           { icon: 'calendar-sync', title: 'Google Calendar sync', desc: 'Show events from your Google calendar through an iCal link.' },
           { icon: 'graduation', title: 'Class and work schedule', desc: 'A weekly schedule for classes or work shifts.' },
           { icon: 'id-card', title: 'Document expiry', desc: 'Get reminded before your ID card, license, passport, or other documents expire.' },
+        ],
+      },
+      {
+        id: 'asisten',
+        icon: 'mic',
+        title: 'Voice assistant',
+        items: [
+          { icon: 'mic', title: 'Call it by name', desc: '“Dzerly” or “Halo Dzerly”. The assistant answers first, then listens for your command.' },
+          { icon: 'help', title: 'Ask anything', desc: 'Time, prayer times, weather, battery, CPU/RAM, general knowledge, math, and exchange rates. Answers are spoken in a robot voice.' },
+          { icon: 'play', title: 'Play songs by voice', desc: '“Putar lagu …” (“play …”) opens and plays the video on YouTube. Add “di Spotify” to search on Spotify instead.' },
+          { icon: 'globe', title: 'Open websites', desc: '“Buka YouTube”, “buka Gmail”, and other popular sites.' },
+          { icon: 'spell-check', title: 'Speech autocorrect', desc: 'Misheard words are fixed automatically, like “yutub” becoming YouTube. You can add your own corrections too.' },
         ],
       },
       {
@@ -676,7 +778,22 @@ const en: Content = {
         title: 'Music',
         items: [
           { icon: 'mic-vocal', title: 'Lyrics in the capsule', desc: 'Lyrics scroll with the song, and the active line shows in the capsule when the panel is closed.' },
+          { icon: 'focus', title: 'Music focus mode', desc: 'While a song plays, the capsule shows only the song. Turn it off if you still want to see the clock and robot eyes.' },
           { icon: 'list-music', title: 'Song queue', desc: 'Save YouTube, Spotify, and other links to play again.' },
+        ],
+      },
+      {
+        id: 'kontrol',
+        icon: 'sliders',
+        title: 'Controls & devices',
+        items: [
+          { icon: 'sliders', title: 'Control center', desc: 'Wi-Fi (with the network name), Bluetooth, Windows dark mode, mute, night light, battery saver, color picker, and lock screen.' },
+          { icon: 'volume', title: 'Volume and brightness', desc: 'Big sliders in the Control Center, or just scroll on the capsule (Shift + scroll for brightness).' },
+          { icon: 'mouse', title: 'Quick gestures', desc: 'Double-click the capsule to play or pause music.' },
+          { icon: 'eye', title: 'Privacy indicator', desc: 'A green/orange dot when your camera or mic is in use. In meetings, right-click the capsule to mute your mic.' },
+          { icon: 'message', title: 'App notifications', desc: 'WhatsApp, Telegram, email, and other messages show up in the capsule.' },
+          { icon: 'key', title: 'Auto-copy OTP', desc: 'OTP codes from notifications are copied instantly, ready to paste.' },
+          { icon: 'bluetooth', title: 'Bluetooth battery', desc: 'Check the battery of your Bluetooth earbuds, headset, or mouse.' },
         ],
       },
       {
@@ -684,23 +801,11 @@ const en: Content = {
         icon: 'clipboard',
         title: 'Clipboard & files',
         items: [
-          { icon: 'clipboard', title: 'Clipboard history', desc: 'Everything you copy is saved, searchable, and pinnable.' },
+          { icon: 'clipboard', title: 'Clipboard history', desc: 'Text you copy is saved, searchable, and pinnable.' },
           { icon: 'archive', title: 'File shelf', desc: 'Drag files onto the capsule to park them, then paste them into Explorer, WhatsApp, or email.' },
           { icon: 'smartphone', title: 'Send files from your phone', desc: 'Scan a QR code to send files and text to your PC over the same Wi-Fi, or grab shelf files on your phone. No cables, no extra phone app.' },
           { icon: 'crop', title: 'Screen capture', desc: 'Snip, full screenshot, screen recording, and your screenshot folder in one click.' },
           { icon: 'download', title: 'Download monitor', desc: 'See files your browser is downloading and their speed.' },
-        ],
-      },
-      {
-        id: 'notifikasi',
-        icon: 'bell',
-        title: 'Notifications & devices',
-        items: [
-          { icon: 'message', title: 'App notifications', desc: 'WhatsApp, Telegram, email, and other messages show up in the capsule.' },
-          { icon: 'key', title: 'Auto-copy OTP', desc: 'OTP codes from notifications are copied instantly, ready to paste.' },
-          { icon: 'bluetooth', title: 'Bluetooth battery', desc: 'Check the battery of your Bluetooth earbuds, headset, or mouse.' },
-          { icon: 'eye', title: 'Privacy indicator', desc: 'Know which app is using your camera or microphone.' },
-          { icon: 'mic', title: 'Mic and volume controls', desc: 'A clean view of your mic mute status and volume level.' },
         ],
       },
       {
@@ -730,10 +835,12 @@ const en: Content = {
         title: 'System & wellbeing',
         items: [
           { icon: 'cpu', title: 'CPU and RAM monitor', desc: 'Live resource usage.' },
-          { icon: 'cloud-sun', title: 'Weather', desc: 'Temperature and conditions where you are.' },
+          { icon: 'cloud-sun', title: 'Weather', desc: 'Temperature and conditions where you are, plus a heads-up when rain is coming within the hour.' },
           { icon: 'droplet', title: 'Water reminder', desc: 'A daily glass target with regular reminders.' },
-          { icon: 'eye-off', title: 'Eye breaks', desc: 'Regular reminders to look away from the screen.' },
-          { icon: 'minimize', title: 'Hide in fullscreen', desc: 'Dzerly steps aside automatically while you watch or play games.' },
+          { icon: 'eye-off', title: 'Eye breaks', desc: 'The robot demonstrates eye exercises from time to time, so you look away from the screen.' },
+          { icon: 'minimize', title: 'Hide in fullscreen', desc: 'Dzerly steps aside automatically while you watch, play games, or present.' },
+          { icon: 'power', title: 'Start with Windows', desc: 'Dzerly opens automatically every time you sign in to Windows.' },
+          { icon: 'monitor', title: 'Multi-monitor', desc: 'Choose which screen Dzerly appears on, or let it follow your cursor to the screen you are using.' },
         ],
       },
     ],
@@ -762,7 +869,10 @@ const en: Content = {
   personalize: {
     eyebrow: 'Personalization',
     title: 'Make Dzerly feel like yours.',
-    subtitle: 'Try it right here. Every option below lives in the app’s Settings.',
+    subtitle:
+      'Everything lives in a tidy Settings window: a sidebar menu, a search box (Ctrl + F), and a live preview. Visual changes apply instantly, no saving needed. Try some of them here.',
+    shape: 'Shape',
+    shapes: { capsule: 'Capsule', notch: 'Notch' },
     palette: '9 color palettes',
     custom: 'Your own color',
     style: '6 panel styles',
@@ -781,15 +891,18 @@ const en: Content = {
       ['exercise', 'Workout'],
     ],
     eyeColor: 'Eye color',
-    widgets: 'Capsule widgets',
-    widgetNames: { clock: 'Clock', weather: 'Weather', battery: 'Battery' },
+    widgets: 'Capsule content',
+    widgetNames: { eyes: 'Robot eyes', clock: 'Clock', info: 'Prayer/weather' },
     language: 'Language',
     points: [
+      'A floating capsule, or a notch that hugs the top edge of the screen.',
       '9 color palettes, or your own accent color.',
-      '6 panel styles: Solid, Glass, Frosted, AMOLED, Aurora, Minimal.',
-      'Dark and light themes, transparency, panel corners, and display size.',
-      'Robot eyes that follow your cursor, with several moods.',
-      'Choose which widgets to show.',
+      '6 panel styles: Solid, Glass, Frosted, AMOLED, Aurora, Minimal. Solid can take your own panel and text colors.',
+      'Dark and light themes, glass transparency, panel corners, and display size (75–130%).',
+      'A robot you can dress up: 7 eye shapes, 8 accessories (glasses, hat, headphones, bow, and more), any eye color, and relaxed or cursor-following eyes.',
+      'Choose what the capsule shows: robot eyes, clock (with or without the date), and prayer/weather info.',
+      'When idle, the capsule shrinks and rotates through the clock, weather, robot eyes, or prayer times.',
+      'Reorder the panel menu by dragging, and pick the widgets you want to see.',
       'English or Indonesian.',
     ],
     palettes: { dzerly: 'Dzerly', matcha: 'Matcha', senja: 'Dusk', neon: 'Neon', ocean: 'Ocean', sakura: 'Sakura', lavender: 'Lavender', gold: 'Gold', mono: 'Mono' },
@@ -800,7 +913,7 @@ const en: Content = {
     points: [
       { icon: 'hard-drive', title: 'Stored locally.', desc: 'Your agenda, tasks, clipboard, and settings live on your PC, not on our servers.' },
       { icon: 'user-x', title: 'No account.', desc: 'Start using it right away, no sign-up or login.' },
-      { icon: 'wifi', title: 'Online only when needed.', desc: 'The internet is used for prayer times, weather, lyrics, and speech recognition. Sending files from your phone runs over your own local Wi-Fi.' },
+      { icon: 'wifi', title: 'Online only when needed.', desc: 'The internet is used for prayer times, weather, lyrics, speech recognition, and assistant answers looked up online (Wikipedia, DuckDuckGo, exchange rates, YouTube song search). Sending files from your phone runs over your own local Wi-Fi.' },
     ],
   },
   download: {
@@ -811,6 +924,7 @@ const en: Content = {
       ['Component', 'Microsoft Edge WebView2 Runtime (built into Windows 11)'],
       ['Download size', '~3 MB (.exe installer) or ~4 MB (.msi)'],
       ['Extension (optional)', 'Google Chrome or Microsoft Edge'],
+      ['Microphone (optional)', 'For the voice assistant'],
     ],
     exe: 'Download installer (.exe)',
     exeNote: 'Recommended',
@@ -878,21 +992,29 @@ const en: Content = {
       { q: 'Does Dzerly run on macOS or Linux?', a: 'Right now Dzerly is only available for Windows 10 and 11.' },
       {
         q: 'Does Dzerly play music itself?',
-        a: 'No. Dzerly shows info and lyrics for the song you play in your browser through the Dzerly Media Bridge extension. Playback, login, and controls stay with your music service.',
+        a: 'Dzerly has no music player of its own. Songs keep playing in your music service in the browser, and Dzerly shows the title and lyrics through the Dzerly Media Bridge extension. You can also ask the assistant to “putar lagu …” (play a song), and Dzerly opens it on YouTube.',
       },
       {
         q: 'Does the voice assistant use cloud AI?',
-        a: "The assistant's answers are built from the app's local data, with no AI service. Speech recognition uses WebView's built-in feature and may need an internet connection.",
+        a: 'No. Everyday questions like the time, prayer times, weather, and PC status are answered from data in the app. General knowledge and exchange rates are looked up on Wikipedia, DuckDuckGo, and an exchange-rate service. If there is no short answer, Dzerly opens Google results for you. Speech recognition uses WebView’s built-in feature and needs an internet connection.',
+      },
+      {
+        q: 'Is the assistant always listening?',
+        a: 'The mic stays on to wait for its name. Until you say “Dzerly” or “Halo Dzerly”, the assistant shows no transcript and runs no commands.',
       },
       {
         q: 'Why does Windows show a SmartScreen warning?',
-        a: 'Because this version is not digitally signed yet. The app is safe to install. Click “More info”, then “Run anyway”.',
+        a: 'Because this version is not digitally signed yet. Click “More info”, then “Run anyway”.',
       },
       {
         q: 'Does Dzerly get in the way of games or videos?',
         a: 'No. Dzerly hides automatically when a fullscreen app is running, and the capsule disappears on its own when not in use.',
       },
       { q: 'How do I open search?', a: 'Press Ctrl + Alt + Space from anywhere.' },
+      {
+        q: 'What if I have more than one monitor?',
+        a: 'Pick a monitor in Settings → Display, or choose “Follow cursor” so Dzerly moves to the screen you are using.',
+      },
     ],
   },
   cta: {
