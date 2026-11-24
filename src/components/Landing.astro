@@ -11,6 +11,7 @@ import Privacy from './Privacy.astro';
 import Download from './Download.astro';
 import DownloadStats from './DownloadStats.astro';
 import Support from './Support.astro';
+import Feedback from './Feedback.astro';
 import Faq from './Faq.astro';
 import Cta from './Cta.astro';
 import Footer from './Footer.astro';
@@ -37,6 +38,7 @@ const t = content[lang];
     <DownloadStats t={t} />
     <Download t={t} />
     <Faq t={t} />
+    <Feedback t={t} lang={lang} />
     <Support t={t} />
     <Cta t={t} />
   </main>

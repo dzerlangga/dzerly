@@ -54,6 +54,20 @@ export const SITE = {
   /** [ISI] Tautan Chrome Web Store. Kosong → tombol mengarah ke panduan pemasangan manual. */
   extensionStoreUrl: '',
 
+  /**
+   * Form "Komplain & masukan". Situs ini statis, jadi pesan dikirim ke layanan form pihak ketiga.
+   * - Web3Forms (gratis, tanpa akun): daftar email di https://web3forms.com → isi `accessKey`,
+   *   biarkan `endpoint` seperti di bawah. Pesan masuk ke email tersebut.
+   * - Formspree: isi `endpoint` dengan 'https://formspree.io/f/xxxx' dan kosongkan `accessKey`.
+   * Bila `accessKey` dan endpoint Formspree kosong, form membuka GitHub Issue yang sudah terisi
+   * (atau email ke `contactEmail` bila diisi) sebagai cadangan.
+   */
+  feedback: {
+    endpoint: 'https://api.web3forms.com/submit',
+    /** [ISI] Access key Web3Forms. */
+    accessKey: '',
+  },
+
   /** [ISI] Email kontak di footer. Kosong → tautan disembunyikan. */
   contactEmail: '',
 

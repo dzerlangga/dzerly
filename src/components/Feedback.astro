@@ -1,0 +1,251 @@
+---
+import Icon from './Icon.astro';
+import { SITE } from '../config';
+import type { Content, Lang } from '../i18n/content';
+
+interface Props {
+  t: Content;
+  lang: Lang;
+}
+const { t, lang } = Astro.props;
+const f = t.feedback;
+const fb = SITE.feedback;
+
+/** Mode kirim: 'web3forms' | 'formspree' | 'fallback' (GitHub Issue / email). */
+const mode = fb.accessKey ? 'web3forms' : /formspree\.io\/f\//.test(fb.endpoint) ? 'formspree' : 'fallback';
+---
+
+<section id="masukan" class="relative overflow-hidden py-24 sm:py-32">
+  <div class="orb top-1/3 -left-40 h-[24rem] w-[24rem] bg-[#2ad4ff] opacity-[calc(var(--glow)*0.45)]" aria-hidden="true"></div>
+  <div class="mx-auto grid max-w-6xl items-start gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+    <div data-reveal>
+      <p class="eyebrow">{f.eyebrow}</p>
+      <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">{f.title}</h2>
+      <p class="mt-4 text-pretty text-muted">{f.subtitle}</p>
+      <ul class="mt-8 grid gap-3 text-sm text-muted">
+        {
+          f.points.map((p) => (
+            <li class="flex gap-3">
+              <span class="mt-0.5 text-cyan-ink">
+                <Icon name="check" size={16} stroke={2.4} />
+              </span>
+              {p}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <form
+      id="feedback-form"
+      class="glass grid gap-5 rounded-[23px] p-5 sm:p-7"
+      novalidate
+      data-reveal
+      style="--d:1"
+      data-mode={mode}
+      data-endpoint={fb.endpoint}
+      data-key={fb.accessKey}
+      data-repo={SITE.githubRepo}
+      data-email={SITE.contactEmail}
+      data-lang={lang}
+      data-sending={f.sending}
+      data-success={f.success}
+      data-error={f.error}
+      data-fallback={f.fallback}
+      data-short={f.tooShort}
+    >
+      <fieldset>
+        <legend class="fb-label">{f.typeLabel}</legend>
+        <div class="mt-2 flex flex-wrap gap-2">
+          {
+            f.types.map((ty, i) => (
+              <label class="chip">
+                <input type="radio" name="type" value={ty.value} data-label={ty.label} checked={i === 0} class="sr-only" />
+                <span>{ty.emoji}</span>
+                {ty.label}
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <label class="grid gap-2">
+          <span class="fb-label">{f.name}</span>
+          <input class="field" type="text" name="name" maxlength="80" autocomplete="name" placeholder={f.namePh} />
+        </label>
+        <label class="grid gap-2">
+          <span class="fb-label">{f.email}</span>
+          <input class="field" type="email" name="email" maxlength="120" autocomplete="email" placeholder={f.emailPh} />
+        </label>
+      </div>
+
+      <label class="grid gap-2">
+        <span class="fb-label">{f.message} <span class="text-[#ff9a1f]">*</span></span>
+        <textarea class="field min-h-36 resize-y py-3" name="message" required minlength="10" maxlength="3000" placeholder={f.messagePh}></textarea>
+      </label>
+
+      <!-- Jebakan bot: harus tetap kosong -->
+      <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+      <div class="flex flex-wrap items-center gap-4">
+        <button type="submit" class="btn btn-primary">
+          <Icon name="message" size={17} />
+          <span data-label>{f.submit}</span>
+        </button>
+        <p class="text-sm font-semibold" role="status" aria-live="polite" data-status></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .fb-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .field {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field::placeholder {
+    color: var(--muted);
+    opacity: 0.7;
+  }
+  .field:focus {
+    outline: none;
+    border-color: rgb(42 212 255 / 0.6);
+    box-shadow: 0 0 0 4px rgb(42 212 255 / 0.12);
+  }
+  .field.invalid {
+    border-color: #e5484d;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.25s var(--ease-spring), border-color 0.2s, background 0.2s;
+  }
+  .chip:hover {
+    transform: translateY(-2px);
+  }
+  .chip:has(input:checked) {
+    border-color: rgb(42 212 255 / 0.55);
+    background: rgb(42 212 255 / 0.12);
+  }
+  .chip:has(input:focus-visible) {
+    outline: 2px solid #2ad4ff;
+    outline-offset: 3px;
+  }
+  [data-status].ok {
+    color: #22c55e;
+  }
+  [data-status].err {
+    color: #e5484d;
+  }
+  button[disabled] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('feedback-form') as HTMLFormElement | null;
+  if (form) {
+    const d = form.dataset;
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    const btnLabel = btn.querySelector<HTMLElement>('[data-label]')!;
+    const origLabel = btnLabel.textContent ?? '';
+    const msg = form.elements.namedItem('message') as HTMLTextAreaElement;
+
+    const setStatus = (text: string, kind: '' | 'ok' | 'err' = '') => {
+      status.textContent = text;
+      status.className = `text-sm font-semibold ${kind}`;
+    };
+
+    msg.addEventListener('input', () => msg.classList.remove('invalid'));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      if (fd.get('botcheck')) return;
+
+      const message = String(fd.get('message') ?? '').trim();
+      if (message.length < 10) {
+        msg.classList.add('invalid');
+        msg.focus();
+        setStatus(d.short!, 'err');
+        return;
+      }
+
+      const typeInput = form.querySelector<HTMLInputElement>('input[name=type]:checked');
+      const typeLabel = typeInput?.dataset.label ?? 'Feedback';
+      const name = String(fd.get('name') ?? '').trim();
+      const email = String(fd.get('email') ?? '').trim();
+      const subject = `[Dzerly] ${typeLabel}${name ? ` — ${name}` : ''}`;
+
+      // Tanpa layanan form: buka GitHub Issue (atau email) yang sudah terisi.
+      if (d.mode === 'fallback') {
+        const body = `${message}\n\n---\n${name ? `Nama: ${name}\n` : ''}${email ? `Email: ${email}\n` : ''}Bahasa: ${d.lang}`;
+        const url = d.email
+          ? `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+          : `https://github.com/${d.repo}/issues/new?title=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        setStatus(d.fallback!);
+        window.open(url, '_blank', 'noopener');
+        return;
+      }
+
+      const payload: Record<string, string> = {
+        subject,
+        type: typeLabel,
+        name: name || '-',
+        email: email || '-',
+        message,
+        lang: d.lang!,
+        page: location.href,
+      };
+      if (d.mode === 'web3forms') {
+        payload.access_key = d.key!;
+        payload.from_name = 'Dzerly Landing';
+        if (email) payload.replyto = email;
+      } else if (email) {
+        payload._replyto = email;
+      }
+
+      btn.disabled = true;
+      btnLabel.textContent = d.sending!;
+      setStatus('');
+      try {
+        const res = await fetch(d.endpoint!, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        setStatus(d.success!, 'ok');
+      } catch {
+        setStatus(d.error!, 'err');
+      } finally {
+        btn.disabled = false;
+        btnLabel.textContent = origLabel;
+      }
+    });
+  }
+</script>

@@ -22,7 +22,8 @@ const { t, lang } = Astro.props;
 
     <nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-muted" aria-label="Footer">
       {t.nav.links.map((l) => <a href={l.href} class="hover:text-ink">{l.label}</a>)}
-      {SITE.contactEmail && <a href={`mailto:${SITE.contactEmail}`} class="hover:text-ink">{t.footer.contact}</a>}
+      <a href="#masukan" class="hover:text-ink">{t.feedback.eyebrow}</a>
+      {SITE.contactEmail &&<a href={`mailto:${SITE.contactEmail}`} class="hover:text-ink">{t.footer.contact}</a>}
       {SITE.privacyPolicyUrl && <a href={SITE.privacyPolicyUrl} class="hover:text-ink">{t.footer.privacyPolicy}</a>}
       <a href={lang === 'id' ? '/en/' : '/'} class="hover:text-ink">{lang === 'id' ? 'English' : 'Bahasa Indonesia'}</a>
     </nav>
