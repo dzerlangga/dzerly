@@ -9,10 +9,6 @@ interface Props {
 }
 const { t, lang } = Astro.props;
 const f = t.feedback;
-const fb = SITE.feedback;
-
-/** Mode kirim: 'web3forms' | 'formspree' | 'fallback' (GitHub Issue / email). */
-const mode = fb.accessKey ? 'web3forms' : /formspree\.io\/f\//.test(fb.endpoint) ? 'formspree' : 'fallback';
 ---
 
 <section id="masukan" class="relative overflow-hidden py-24 sm:py-32">
@@ -42,11 +38,7 @@ const mode = fb.accessKey ? 'web3forms' : /formspree\.io\/f\//.test(fb.endpoint)
       novalidate
       data-reveal
       style="--d:1"
-      data-mode={mode}
-      data-endpoint={fb.endpoint}
-      data-key={fb.accessKey}
-      data-repo={SITE.githubRepo}
-      data-email={SITE.contactEmail}
+      data-email={SITE.feedback.email}
       data-lang={lang}
       data-sending={f.sending}
       data-success={f.success}
@@ -200,48 +192,41 @@ const mode = fb.accessKey ? 'web3forms' : /formspree\.io\/f\//.test(fb.endpoint)
       const email = String(fd.get('email') ?? '').trim();
       const subject = `[Dzerly] ${typeLabel}${name ? ` — ${name}` : ''}`;
 
-      // Tanpa layanan form: buka GitHub Issue (atau email) yang sudah terisi.
-      if (d.mode === 'fallback') {
-        const body = `${message}\n\n---\n${name ? `Nama: ${name}\n` : ''}${email ? `Email: ${email}\n` : ''}Bahasa: ${d.lang}`;
-        const url = d.email
-          ? `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-          : `https://github.com/${d.repo}/issues/new?title=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        setStatus(d.fallback!);
-        window.open(url, '_blank', 'noopener');
-        return;
-      }
-
       const payload: Record<string, string> = {
-        subject,
-        type: typeLabel,
-        name: name || '-',
-        email: email || '-',
-        message,
-        lang: d.lang!,
-        page: location.href,
+        _subject: subject,
+        _template: 'table',
+        _captcha: 'false',
+        Jenis: typeLabel,
+        Nama: name || '-',
+        Email: email || '-',
+        Pesan: message,
+        Bahasa: d.lang!,
+        Halaman: location.href,
       };
-      if (d.mode === 'web3forms') {
-        payload.access_key = d.key!;
-        payload.from_name = 'Dzerly Landing';
-        if (email) payload.replyto = email;
-      } else if (email) {
-        payload._replyto = email;
-      }
+      if (email) payload._replyto = email;
+
+      // Cadangan: buka aplikasi email pengunjung dengan pesan yang sudah terisi.
+      const openMail = () => {
+        const body = `${message}\n\n---\n${name ? `Nama: ${name}\n` : ''}${email ? `Email: ${email}\n` : ''}`;
+        location.href = `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      };
 
       btn.disabled = true;
       btnLabel.textContent = d.sending!;
       setStatus('');
       try {
-        const res = await fetch(d.endpoint!, {
+        const res = await fetch(`https://formsubmit.co/ajax/${d.email}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error(String(res.status));
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || String(json.success) !== 'true') throw new Error(json.message ?? String(res.status));
         form.reset();
         setStatus(d.success!, 'ok');
       } catch {
-        setStatus(d.error!, 'err');
+        setStatus(d.fallback!, 'err');
+        openMail();
       } finally {
         btn.disabled = false;
         btnLabel.textContent = origLabel;

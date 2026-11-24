@@ -55,17 +55,13 @@ export const SITE = {
   extensionStoreUrl: '',
 
   /**
-   * Form "Komplain & masukan". Situs ini statis, jadi pesan dikirim ke layanan form pihak ketiga.
-   * - Web3Forms (gratis, tanpa akun): daftar email di https://web3forms.com → isi `accessKey`,
-   *   biarkan `endpoint` seperti di bawah. Pesan masuk ke email tersebut.
-   * - Formspree: isi `endpoint` dengan 'https://formspree.io/f/xxxx' dan kosongkan `accessKey`.
-   * Bila `accessKey` dan endpoint Formspree kosong, form membuka GitHub Issue yang sudah terisi
-   * (atau email ke `contactEmail` bila diisi) sebagai cadangan.
+   * Form "Komplain & masukan". Pesan dikirim ke `email` lewat FormSubmit (https://formsubmit.co),
+   * tanpa akun. Kiriman PERTAMA memicu email aktivasi ke alamat ini — klik tautannya sekali,
+   * setelah itu semua pesan langsung masuk. Bila pengiriman gagal, form membuka aplikasi email
+   * pengunjung dengan pesan yang sudah terisi.
    */
   feedback: {
-    endpoint: 'https://api.web3forms.com/submit',
-    /** [ISI] Access key Web3Forms. */
-    accessKey: '',
+    email: 'dnahendri@gmail.com',
   },
 
   /** [ISI] Email kontak di footer. Kosong → tautan disembunyikan. */

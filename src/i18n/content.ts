@@ -520,7 +520,7 @@ const id = {
     sending: 'Mengirim…',
     success: 'Terima kasih! Pesanmu sudah terkirim.',
     error: 'Gagal mengirim. Coba lagi sebentar lagi.',
-    fallback: 'Membuka GitHub/email untuk mengirim pesanmu…',
+    fallback: 'Gagal mengirim langsung, membuka aplikasi email…',
     tooShort: 'Pesan minimal 10 karakter.',
   },
   cta: {
@@ -1075,7 +1075,7 @@ const en: Content = {
     sending: 'Sending…',
     success: 'Thank you! Your message has been sent.',
     error: 'Could not send. Please try again shortly.',
-    fallback: 'Opening GitHub/email to send your message…',
+    fallback: 'Could not send directly, opening your email app…',
     tooShort: 'Message must be at least 10 characters.',
   },
   cta: {
